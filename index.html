@@ -540,180 +540,7 @@
     </symbol>
   </svg>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-  // Use a chave pública do projeto. Nunca coloque a chave service_role no HTML.
-  const SUPABASE_URL = "https://onvsyopaxskqpvdcctcp.supabase.co";
-  const SUPABASE_ANON_KEY = "COLE_AQUI_A_ANON_KEY";
-  const BUCKET = "album";
-
-  const $ = (id) => document.getElementById(id);
-  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  // O QR usa os parâmetros a (e-mail) e k (senha) no fragmento da URL.
-  async function loginPeloQR() {
-    if (!location.hash || location.hash.length < 3) return false;
-
-    const parametros = new URLSearchParams(location.hash.slice(1));
-    const email = parametros.get("a");
-    const senha = parametros.get("k");
-
-    if (!email || !senha) return false;
-
-    history.replaceState(null, "", location.pathname + location.search);
-    const { error } = await sb.auth.signInWithPassword({
-      email,
-      password: senha
-    });
-
-    return !error;
-  }
-
-  $("loginForm").addEventListener("submit", async (evento) => {
-    evento.preventDefault();
-
-    const botao = $("btnEntrar");
-    const mensagem = $("loginMsg");
-    botao.disabled = true;
-    mensagem.textContent = "";
-
-    const { error } = await sb.auth.signInWithPassword({
-      email: $("email").value.trim(),
-      password: $("senha").value
-    });
-
-    botao.disabled = false;
-
-    if (error) {
-      mensagem.textContent = "E-mail ou senha incorretos. Tente novamente.";
-      return;
-    }
-
-    await mostrarAlbum();
-  });
-
-  $("btnSair").addEventListener("click", async () => {
-    await sb.auth.signOut();
-    location.reload();
-  });
-
-  function legenda(nomeArquivo) {
-    let texto = nomeArquivo
-      .replace(/\.[^.]+$/, "")
-      .replace(/^\d+[\s._-]*/, "")
-      .replace(/[_-]+/g, " ")
-      .trim();
-
-    if (!texto) texto = "Passarinho";
-
-    return texto.charAt(0).toUpperCase() + texto.slice(1);
-  }
-
-  async function mostrarAlbum() {
-    $("login").hidden = true;
-    $("app").hidden = false;
-
-    const area = $("album");
-    area.innerHTML = '<div class="state">Carregando as fotos… 🐦</div>';
-
-    const { data: arquivos, error } = await sb.storage
-      .from(BUCKET)
-      .list("", {
-        limit: 500,
-        sortBy: { column: "name", order: "asc" }
-      });
-
-    if (error) {
-      area.innerHTML =
-        '<div class="state">Não foi possível carregar o álbum agora. Tente novamente em instantes.</div>';
-      return;
-    }
-
-    const imagens = (arquivos || []).filter(
-      (arquivo) =>
-        arquivo.id && /\.(jpe?g|png|webp|gif|avif)$/i.test(arquivo.name)
-    );
-
-    if (!imagens.length) {
-      area.innerHTML =
-        '<div class="state">Em breve as fotos aparecerão aqui! 🌱</div>';
-      return;
-    }
-
-    const fotos = imagens.map((arquivo) => ({
-      nome: arquivo.name,
-      url: sb.storage.from(BUCKET).getPublicUrl(arquivo.name).data.publicUrl
-    }));
-
-    area.innerHTML = "";
-
-    fotos.forEach((foto, indice) => {
-      const faixa = document.createElement("div");
-      faixa.className = "band";
-      faixa.innerHTML = `
-        <div class="band-inner">
-          <figure class="reveal">
-            <div class="photo">
-              <img loading="lazy" alt="">
-            </div>
-          </figure>
-          <div class="reveal delay">
-            <div class="num"></div>
-            <div class="caption"></div>
-          </div>
-        </div>`;
-
-      const imagem = faixa.querySelector("img");
-      imagem.src = foto.url;
-      imagem.alt = legenda(foto.nome);
-      faixa.querySelector(".num").textContent = indice + 1;
-      faixa.querySelector(".caption").textContent = legenda(foto.nome);
-      faixa
-        .querySelector(".photo")
-        .addEventListener("click", () => abrirLightbox(foto.url, legenda(foto.nome)));
-
-      area.appendChild(faixa);
-    });
-
-    observarReveal();
-  }
-
-  function observarReveal() {
-    const observador = new IntersectionObserver(
-      (entradas) => {
-        entradas.forEach((entrada) => {
-          if (entrada.isIntersecting) {
-            entrada.target.classList.add("in");
-            observador.unobserve(entrada.target);
-          }
-        });
-      },
-      { threshold: 0.18, rootMargin: "0px 0px -6% 0px" }
-    );
-
-    document.querySelectorAll(".reveal").forEach((item) => {
-      observador.observe(item);
-    });
-  }
-
-  const lightbox = $("lightbox");
-
-  function abrirLightbox(url, texto) {
-    lightbox.querySelector("img").src = url;
-    lightbox.querySelector("p").textContent = texto;
-    lightbox.classList.add("open");
-  }
-
-  lightbox.addEventListener("click", () => {
-    lightbox.classList.remove("open");
-  });
-
-  document.addEventListener("keydown", (evento) => {
-    if (evento.key === "Escape") {
-      lightbox.classList.remove("open");
-    }
-  });
-
   const Musica = (() => {
     const BPM = 112;
     const PASSO = 60 / BPM / 2;
@@ -875,17 +702,27 @@
       }
     }
 
+    let iniciando = false;
+
     async function ligar() {
       if (ligada) return true;
+      if (iniciando) return false;
       if (!ctx && !montar()) return false;
 
+      iniciando = true;
       clearTimeout(tSuspende);
 
       try {
-        await ctx.resume();
-      } catch (erro) {
-        return false;
-      }
+        await Promise.race([
+          ctx.resume(),
+          new Promise((resolver) => setTimeout(resolver, 700))
+        ]);
+      } catch (erro) {}
+
+      iniciando = false;
+
+      // Sem toque válido ainda: tenta de novo no próximo toque.
+      if (ctx.state !== "running") return false;
 
       ligada = true;
       passo = 0;
@@ -914,7 +751,7 @@
   })();
 
   (function iniciarBotaoMusica() {
-    const botao = $("btnMusica");
+    const botao = document.getElementById("btnMusica");
     const CHAVE_MUSICA = "album_musica";
 
     const salvarPreferencia = (valor) => {
@@ -944,8 +781,7 @@
         Musica.desligar();
         salvarPreferencia("off");
       } else {
-        await Musica.ligar();
-        salvarPreferencia("on");
+        if (await Musica.ligar()) salvarPreferencia("on");
       }
 
       atualizarBotao();
@@ -954,6 +790,8 @@
     atualizarBotao();
 
     if (lerPreferencia() === "off") return;
+
+    const EVENTOS = ["pointerup", "touchend", "click", "keydown"];
 
     const iniciarMusica = async (evento) => {
       if (
@@ -964,23 +802,202 @@
         return;
       }
 
-      ["pointerdown", "keydown", "touchend"].forEach((tipo) => {
-        document.removeEventListener(tipo, iniciarMusica, true);
-      });
-
-      if (await Musica.ligar()) atualizarBotao();
+      if (await Musica.ligar()) {
+        EVENTOS.forEach((tipo) => {
+          document.removeEventListener(tipo, iniciarMusica, true);
+        });
+        atualizarBotao();
+      }
     };
 
-    ["pointerdown", "keydown", "touchend"].forEach((tipo) => {
+    EVENTOS.forEach((tipo) => {
       document.addEventListener(tipo, iniciarMusica, true);
     });
   })();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+  // Use a chave pública do projeto. Nunca coloque a chave service_role no HTML.
+  const SUPABASE_URL = "https://onvsyopaxskqpvdcctcp.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_C7D_EQn_oKNm2Vnbh6RAXQ_fe2LRtA5";
+  const BUCKET = "album";
+
+  const $ = (id) => document.getElementById(id);
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // O QR usa os parâmetros a (e-mail) e k (senha) no fragmento da URL.
+  async function loginPeloQR() {
+    if (!location.hash || location.hash.length < 3) return false;
+
+    const parametros = new URLSearchParams(location.hash.slice(1));
+    const email = parametros.get("a");
+    const senha = parametros.get("k");
+
+    if (!email || !senha) return false;
+
+    history.replaceState(null, "", location.pathname + location.search);
+    const { error } = await sb.auth.signInWithPassword({
+      email,
+      password: senha
+    });
+
+    return !error;
+  }
+
+  $("loginForm").addEventListener("submit", async (evento) => {
+    evento.preventDefault();
+
+    const botao = $("btnEntrar");
+    const mensagem = $("loginMsg");
+    botao.disabled = true;
+    mensagem.textContent = "";
+
+    const { error } = await sb.auth.signInWithPassword({
+      email: $("email").value.trim(),
+      password: $("senha").value
+    });
+
+    botao.disabled = false;
+
+    if (error) {
+      mensagem.textContent = "E-mail ou senha incorretos. Tente novamente.";
+      return;
+    }
+
+    await mostrarAlbum();
+  });
+
+  $("btnSair").addEventListener("click", async () => {
+    await sb.auth.signOut();
+    location.reload();
+  });
+
+  function legenda(nomeArquivo) {
+    let texto = nomeArquivo
+      .replace(/\.[^.]+$/, "")
+      .replace(/^\d+[\s._-]*/, "")
+      .replace(/[_-]+/g, " ")
+      .trim();
+
+    if (!texto) texto = "Passarinho";
+
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  }
+
+  async function mostrarAlbum() {
+    $("login").hidden = true;
+    $("app").hidden = false;
+
+    const area = $("album");
+    area.innerHTML = '<div class="state">Carregando as fotos… 🐦</div>';
+
+    const { data: arquivos, error } = await sb.storage
+      .from(BUCKET)
+      .list("", {
+        limit: 500,
+        sortBy: { column: "name", order: "asc" }
+      });
+
+    if (error) {
+      console.error("Erro ao listar fotos:", error);
+      area.innerHTML =
+        '<div class="state">Não foi possível carregar o álbum agora. Tente novamente em instantes.' +
+        '<br><small></small></div>';
+      area.querySelector("small").textContent = "Detalhe técnico: " + (error.message || error);
+      return;
+    }
+
+    const imagens = (arquivos || []).filter(
+      (arquivo) =>
+        arquivo.id && /\.(jpe?g|png|webp|gif|avif)$/i.test(arquivo.name)
+    );
+
+    if (!imagens.length) {
+      area.innerHTML =
+        '<div class="state">Em breve as fotos aparecerão aqui! 🌱</div>';
+      return;
+    }
+
+    const fotos = imagens.map((arquivo) => ({
+      nome: arquivo.name,
+      url: sb.storage.from(BUCKET).getPublicUrl(arquivo.name).data.publicUrl
+    }));
+
+    area.innerHTML = "";
+
+    fotos.forEach((foto, indice) => {
+      const faixa = document.createElement("div");
+      faixa.className = "band";
+      faixa.innerHTML = `
+        <div class="band-inner">
+          <figure class="reveal">
+            <div class="photo">
+              <img loading="lazy" alt="">
+            </div>
+          </figure>
+          <div class="reveal delay">
+            <div class="num"></div>
+            <div class="caption"></div>
+          </div>
+        </div>`;
+
+      const imagem = faixa.querySelector("img");
+      imagem.src = foto.url;
+      imagem.alt = legenda(foto.nome);
+      faixa.querySelector(".num").textContent = indice + 1;
+      faixa.querySelector(".caption").textContent = legenda(foto.nome);
+      faixa
+        .querySelector(".photo")
+        .addEventListener("click", () => abrirLightbox(foto.url, legenda(foto.nome)));
+
+      area.appendChild(faixa);
+    });
+
+    observarReveal();
+  }
+
+  function observarReveal() {
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        entradas.forEach((entrada) => {
+          if (entrada.isIntersecting) {
+            entrada.target.classList.add("in");
+            observador.unobserve(entrada.target);
+          }
+        });
+      },
+      { threshold: 0.18, rootMargin: "0px 0px -6% 0px" }
+    );
+
+    document.querySelectorAll(".reveal").forEach((item) => {
+      observador.observe(item);
+    });
+  }
+
+  const lightbox = $("lightbox");
+
+  function abrirLightbox(url, texto) {
+    lightbox.querySelector("img").src = url;
+    lightbox.querySelector("p").textContent = texto;
+    lightbox.classList.add("open");
+  }
+
+  lightbox.addEventListener("click", () => {
+    lightbox.classList.remove("open");
+  });
+
+  document.addEventListener("keydown", (evento) => {
+    if (evento.key === "Escape") {
+      lightbox.classList.remove("open");
+    }
+  });
 
   (async function iniciarPagina() {
-    if (SUPABASE_URL.startsWith("COLE_AQUI")) {
-      $("login").hidden = false;
-      $("loginMsg").textContent =
-        "Configure SUPABASE_URL e SUPABASE_ANON_KEY no index.html.";
+    if (SUPABASE_URL.startsWith("COLE_AQUI") || SUPABASE_ANON_KEY.startsWith("COLE_AQUI")) {
+      $("app").hidden = false;
+      $("album").innerHTML =
+        '<div class="state">Falta configurar a chave do Supabase (SUPABASE_ANON_KEY) no index.html.</div>';
       return;
     }
 
