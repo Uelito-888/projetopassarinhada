@@ -1,279 +1,991 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<title>Álbum dos Passarinhos</title>
-<style>
-  :root{
-    --bg:#fbf6ea; --ink:#2b3a2e; --muted:#6b7a6e; --accent:#e4572e; --leaf:#3f7d58; --sky:#cfe8ef; --card:#ffffff;
-    --radius:22px;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;overflow-x:hidden}
-
-  /* ---------- Login ---------- */
-  #login{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;
-    background:linear-gradient(180deg,var(--sky),var(--bg))}
-  #login[hidden]{display:none}
-  .login-card{background:var(--card);border-radius:var(--radius);padding:32px 28px;width:min(420px,100%);
-    box-shadow:0 18px 50px rgba(43,58,46,.15);text-align:center}
-  .login-card svg{width:84px;height:84px;margin-bottom:8px}
-  .login-card h1{font-size:1.6rem;margin-bottom:4px}
-  .login-card p{color:var(--muted);margin-bottom:20px;font-size:.95rem}
-  label{display:block;text-align:left;font-size:.85rem;color:var(--muted);margin:12px 0 4px}
-  input{width:100%;padding:13px 14px;border:2px solid #e3dcc8;border-radius:14px;font-size:1rem;background:#fffdf7;color:var(--ink)}
-  input:focus{outline:none;border-color:var(--leaf)}
-  button.primary{margin-top:20px;width:100%;padding:14px;border:0;border-radius:14px;background:var(--accent);
-    color:#fff;font-size:1.05rem;font-weight:700;cursor:pointer;transition:transform .15s,filter .15s}
-  button.primary:hover{filter:brightness(1.06);transform:translateY(-1px)}
-  button.primary:disabled{opacity:.6;cursor:wait}
-  #loginMsg{margin-top:14px;min-height:1.3em;font-size:.9rem;color:#b3261e}
-
-  /* ---------- Hero ---------- */
-  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-    padding:60px 24px 80px;position:relative;overflow:hidden;
-    background:radial-gradient(ellipse at 50% 0%,var(--sky),transparent 70%)}
-  .hero h1{font-size:clamp(2.4rem,7vw,5rem);line-height:1.05;margin:18px 0 12px;letter-spacing:-.02em}
-  .hero h1 span{color:var(--accent)}
-  .hero p{max-width:34ch;font-size:clamp(1.05rem,2.4vw,1.35rem);color:var(--muted)}
-  .hero .bird{width:clamp(110px,20vw,190px);animation:float 4s ease-in-out infinite}
-  .scroll-hint{margin-top:42px;font-size:.9rem;color:var(--muted);animation:bounce 1.8s infinite}
-  @keyframes float{50%{transform:translateY(-14px) rotate(-3deg)}}
-  @keyframes bounce{50%{transform:translateY(8px)}}
-  .cloud{position:absolute;background:#fff;border-radius:99px;opacity:.8;filter:blur(1px)}
-  .cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
-  .c1{width:140px;height:40px;top:14%;left:-160px;animation:drift 38s linear infinite}
-  .c1::before{width:60px;height:60px;top:-30px;left:20px}.c1::after{width:46px;height:46px;top:-20px;left:70px}
-  .c2{width:100px;height:30px;top:30%;left:-120px;animation:drift 52s linear infinite 8s}
-  .c2::before{width:44px;height:44px;top:-22px;left:14px}.c2::after{width:34px;height:34px;top:-14px;left:50px}
-  @keyframes drift{to{transform:translateX(calc(100vw + 320px))}}
-
-  /* ---------- Faixas horizontais de fotos ---------- */
-  #album{display:flex;flex-direction:column}
-  .band{width:100%;padding:clamp(28px,6vw,64px) clamp(16px,5vw,64px);display:flex;justify-content:center}
-  .band:nth-child(even){background:rgba(207,232,239,.35)}
-  .band-inner{width:min(1200px,100%);display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);gap:clamp(16px,4vw,48px);align-items:center}
-  .band:nth-child(even) .band-inner{grid-template-columns:minmax(0,1fr) minmax(0,3fr)}
-  .band:nth-child(even) figure{order:2}
-  .photo{position:relative;border-radius:var(--radius);overflow:hidden;box-shadow:0 14px 40px rgba(43,58,46,.2);
-    aspect-ratio:16/9;background:#e9e1cb;cursor:zoom-in}
-  .photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s ease}
-  .photo:hover img{transform:scale(1.04)}
-  .caption{font-size:clamp(1.2rem,3vw,2rem);font-weight:700;line-height:1.15}
-  .caption small{display:block;font-size:.85rem;font-weight:400;color:var(--muted);margin-top:8px}
-  .num{display:inline-grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--leaf);color:#fff;
-    font-weight:700;margin-bottom:12px}
-
-  /* surgir ao rolar */
-  .reveal{opacity:0;transform:translateY(60px) scale(.97);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
-  .reveal.in{opacity:1;transform:none}
-  .reveal.delay{transition-delay:.18s}
-
-  @media (max-width:720px){
-    .band-inner,.band:nth-child(even) .band-inner{grid-template-columns:1fr}
-    .band:nth-child(even) figure{order:0}
-  }
-  @media (prefers-reduced-motion:reduce){
-    *{animation:none!important;transition:none!important}
-    .reveal{opacity:1;transform:none}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Álbum dos Passarinhos</title>
+  <style>
+  :root {
+    --bg: #fbf6ea;
+    --ink: #2b3a2e;
+    --muted: #6b7a6e;
+    --accent: #e4572e;
+    --leaf: #3f7d58;
+    --sky: #cfe8ef;
+    --card: #ffffff;
+    --radius: 22px;
   }
 
-  /* ---------- Estados ---------- */
-  .state{text-align:center;padding:60px 24px;color:var(--muted);font-size:1.1rem}
-  footer{text-align:center;padding:48px 20px 64px;color:var(--muted);font-size:.95rem}
-  footer button{margin-top:14px;background:none;border:2px solid #d8d0b8;color:var(--muted);padding:8px 18px;border-radius:99px;cursor:pointer;font-size:.9rem}
-  footer button:hover{border-color:var(--leaf);color:var(--leaf)}
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-  /* ---------- Lightbox ---------- */
-  #lightbox{position:fixed;inset:0;z-index:60;background:rgba(15,22,17,.92);display:none;place-items:center;padding:20px;cursor:zoom-out}
-  #lightbox.open{display:grid}
-  #lightbox img{max-width:100%;max-height:88vh;border-radius:12px}
-  #lightbox p{color:#fff;text-align:center;margin-top:12px;font-size:1.1rem}
-</style>
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    overflow-x: hidden;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+    line-height: 1.5;
+  }
+
+  /* Login */
+  #login {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: grid;
+    padding: 20px;
+    place-items: center;
+    background: linear-gradient(180deg, var(--sky), var(--bg));
+  }
+
+  #login[hidden] {
+    display: none;
+  }
+
+  .login-card {
+    width: min(420px, 100%);
+    padding: 32px 28px;
+    border-radius: var(--radius);
+    background: var(--card);
+    box-shadow: 0 18px 50px rgba(43, 58, 46, 0.15);
+    text-align: center;
+  }
+
+  .login-card svg {
+    width: 84px;
+    height: 84px;
+    margin-bottom: 8px;
+  }
+
+  .login-card h1 {
+    margin-bottom: 4px;
+    font-size: 1.6rem;
+  }
+
+  .login-card p {
+    margin-bottom: 20px;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  label {
+    display: block;
+    margin: 12px 0 4px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-align: left;
+  }
+
+  input {
+    width: 100%;
+    padding: 13px 14px;
+    border: 2px solid #e3dcc8;
+    border-radius: 14px;
+    background: #fffdf7;
+    color: var(--ink);
+    font-size: 1rem;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--leaf);
+  }
+
+  button.primary {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    border: 0;
+    border-radius: 14px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s, filter 0.15s;
+  }
+
+  button.primary:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+  }
+
+  button.primary:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+
+  #loginMsg {
+    min-height: 1.3em;
+    margin-top: 14px;
+    color: #b3261e;
+    font-size: 0.9rem;
+  }
+
+  /* Capa de abertura */
+  .hero {
+    position: relative;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 60px 24px 80px;
+    background: radial-gradient(ellipse at 50% 0%, var(--sky), transparent 70%);
+    text-align: center;
+  }
+
+  .hero h1 {
+    margin: 18px 0 12px;
+    font-size: clamp(2.4rem, 7vw, 5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .hero h1 span {
+    color: var(--accent);
+  }
+
+  .hero p {
+    max-width: 34ch;
+    color: var(--muted);
+    font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+  }
+
+  .hero .bird {
+    width: clamp(110px, 20vw, 190px);
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .scroll-hint {
+    margin-top: 42px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    animation: bounce 1.8s infinite;
+  }
+
+  @keyframes float {
+    50% {
+      transform: translateY(-14px) rotate(-3deg);
+    }
+  }
+
+  @keyframes bounce {
+    50% {
+      transform: translateY(8px);
+    }
+  }
+
+  .cloud {
+    position: absolute;
+    border-radius: 99px;
+    background: #fff;
+    opacity: 0.8;
+    filter: blur(1px);
+  }
+
+  .cloud::before,
+  .cloud::after {
+    position: absolute;
+    border-radius: 50%;
+    background: #fff;
+    content: "";
+  }
+
+  .c1 {
+    top: 14%;
+    left: -160px;
+    width: 140px;
+    height: 40px;
+    animation: drift 38s linear infinite;
+  }
+
+  .c1::before {
+    top: -30px;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+  }
+
+  .c1::after {
+    top: -20px;
+    left: 70px;
+    width: 46px;
+    height: 46px;
+  }
+
+  .c2 {
+    top: 30%;
+    left: -120px;
+    width: 100px;
+    height: 30px;
+    animation: drift 52s linear infinite 8s;
+  }
+
+  .c2::before {
+    top: -22px;
+    left: 14px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .c2::after {
+    top: -14px;
+    left: 50px;
+    width: 34px;
+    height: 34px;
+  }
+
+  @keyframes drift {
+    to {
+      transform: translateX(calc(100vw + 320px));
+    }
+  }
+
+  /* Fotos do álbum */
+  #album {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .band {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    padding: clamp(28px, 6vw, 64px) clamp(16px, 5vw, 64px);
+  }
+
+  .band:nth-child(even) {
+    background: rgba(207, 232, 239, 0.35);
+  }
+
+  .band-inner {
+    display: grid;
+    width: min(1200px, 100%);
+    grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(16px, 4vw, 48px);
+  }
+
+  .band:nth-child(even) .band-inner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+  }
+
+  .band:nth-child(even) figure {
+    order: 2;
+  }
+
+  .photo {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius);
+    background: #e9e1cb;
+    box-shadow: 0 14px 40px rgba(43, 58, 46, 0.2);
+    cursor: zoom-in;
+  }
+
+  .photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+  }
+
+  .photo:hover img {
+    transform: scale(1.04);
+  }
+
+  .caption {
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  .caption small {
+    display: block;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 400;
+  }
+
+  .num {
+    display: inline-grid;
+    width: 42px;
+    height: 42px;
+    margin-bottom: 12px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--leaf);
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(60px) scale(0.97);
+    transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .reveal.in {
+    opacity: 1;
+    transform: none;
+  }
+
+  .reveal.delay {
+    transition-delay: 0.18s;
+  }
+
+  @media (max-width: 720px) {
+    .band-inner,
+    .band:nth-child(even) .band-inner {
+      grid-template-columns: 1fr;
+    }
+
+    .band:nth-child(even) figure {
+      order: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    .reveal {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Mensagens e rodapé */
+  .state {
+    padding: 60px 24px;
+    color: var(--muted);
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  footer {
+    padding: 48px 20px 64px;
+    color: var(--muted);
+    font-size: 0.95rem;
+    text-align: center;
+  }
+
+  footer button {
+    margin-top: 14px;
+    padding: 8px 18px;
+    border: 2px solid #d8d0b8;
+    border-radius: 99px;
+    background: none;
+    color: var(--muted);
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  footer button:hover {
+    border-color: var(--leaf);
+    color: var(--leaf);
+  }
+
+  /* Foto ampliada */
+  #lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: none;
+    padding: 20px;
+    place-items: center;
+    background: rgba(15, 22, 17, 0.92);
+    cursor: zoom-out;
+  }
+
+  #lightbox.open {
+    display: grid;
+  }
+
+  #lightbox img {
+    max-width: 100%;
+    max-height: 88vh;
+    border-radius: 12px;
+  }
+
+  #lightbox p {
+    margin-top: 12px;
+    color: #fff;
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  /* Controle da música */
+  #btnMusica {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 2px solid #d8d0b8;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--ink);
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(43, 58, 46, 0.18);
+    backdrop-filter: blur(6px);
+    transition: border-color 0.2s, transform 0.15s;
+  }
+
+  #btnMusica:hover {
+    border-color: var(--leaf);
+    transform: translateY(-1px);
+  }
+
+  #btnMusica[aria-pressed="true"] {
+    border-color: var(--leaf);
+  }
+
+  #btnMusica .i {
+    font-size: 1.1rem;
+  }
+  </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<section id="login" hidden>
-  <form class="login-card" id="loginForm">
-    <svg viewBox="0 0 100 100" aria-hidden="true"><use href="#bird"/></svg>
-    <h1>Álbum dos Passarinhos</h1>
-    <p>Entre com o e-mail e a senha que a escola enviou.</p>
-    <label for="email">E-mail</label>
-    <input id="email" type="email" autocomplete="username" required>
-    <label for="senha">Senha</label>
-    <input id="senha" type="password" autocomplete="current-password" required>
-    <button class="primary" id="btnEntrar" type="submit">Entrar</button>
-    <div id="loginMsg" role="alert"></div>
-  </form>
-</section>
+  <!-- Acesso ao álbum -->
+  <section id="login" hidden>
+    <form class="login-card" id="loginForm">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <use href="#bird" />
+      </svg>
+      <h1>Álbum dos Passarinhos</h1>
+      <p>Entre com o e-mail e a senha que a escola enviou.</p>
+      <label for="email">E-mail</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="senha">Senha</label>
+      <input id="senha" type="password" autocomplete="current-password" required>
+      <button class="primary" id="btnEntrar" type="submit">Entrar</button>
+      <div id="loginMsg" role="alert"></div>
+    </form>
+  </section>
 
-<!-- CONTEÚDO -->
-<main id="app" hidden>
-  <header class="hero">
-    <div class="cloud c1"></div><div class="cloud c2"></div>
-    <svg class="bird" viewBox="0 0 100 100" aria-hidden="true"><use href="#bird"/></svg>
-    <h1>Nossos <span>Passarinhos</span></h1>
-    <p>Um álbum feito com muito carinho pelas crianças da nossa sala.</p>
-    <div class="scroll-hint">role para baixo ↓</div>
-  </header>
+  <!-- Álbum -->
+  <main id="app" hidden>
+    <header class="hero">
+      <div class="cloud c1"></div>
+      <div class="cloud c2"></div>
+      <svg class="bird" viewBox="0 0 100 100" aria-hidden="true">
+        <use href="#bird" />
+      </svg>
+      <h1>Nossos <span>Passarinhos</span></h1>
+      <p>Um álbum feito com muito carinho pelas crianças da nossa sala.</p>
+      <div class="scroll-hint">role para baixo ↓</div>
+    </header>
 
-  <section id="album" aria-live="polite"></section>
+    <section id="album" aria-live="polite"></section>
 
-  <footer>
-    <div>Feito com carinho pela turma 🐦</div>
-    <button id="btnSair" type="button">Sair</button>
-  </footer>
-</main>
+    <footer>
+      <div>Feito com carinho pela turma 🐦</div>
+      <button id="btnSair" type="button" hidden>Sair</button>
+    </footer>
+  </main>
 
-<div id="lightbox" role="dialog" aria-modal="true"><div><img alt=""><p></p></div></div>
+  <button
+    id="btnMusica"
+    type="button"
+    aria-pressed="false"
+    aria-label="Ligar ou desligar a música"
+  >
+    <span class="i">🔇</span>
+    <span class="t">Música: desligada</span>
+  </button>
 
-<!-- Passarinho (SVG reutilizável) -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="bird" viewBox="0 0 100 100">
-    <ellipse cx="50" cy="58" rx="30" ry="25" fill="#e4572e"/>
-    <circle cx="68" cy="38" r="16" fill="#e4572e"/>
-    <path d="M82 36 L98 41 L82 46 Z" fill="#f4b942"/>
-    <circle cx="72" cy="35" r="3.2" fill="#2b3a2e"/>
-    <circle cx="73" cy="34" r="1" fill="#fff"/>
-    <path d="M22 52 L2 38 L8 62 L24 66 Z" fill="#3f7d58"/>
-    <path d="M38 55 Q52 40 64 62 Q50 74 38 55 Z" fill="#c8431f"/>
-    <path d="M44 82 L44 92 M56 82 L56 92" stroke="#f4b942" stroke-width="3" stroke-linecap="round"/>
-  </symbol>
-</svg>
+  <div id="lightbox" role="dialog" aria-modal="true">
+    <div>
+      <img alt="">
+      <p></p>
+    </div>
+  </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-/* =========================================================
-   CONFIGURAÇÃO — preencha com os dados do seu projeto Supabase
-   (Project Settings → API). Use a chave "anon / public".
-   NUNCA coloque a chave "service_role" aqui.
-   ========================================================= */
-const SUPABASE_URL      = "https://onvsyopaxskqpvdcctcp.supabase.co";   // ex: https://abcd1234.supabase.co
-const SUPABASE_ANON_KEY = "sb_publishable_C7D_EQn_oKNm2Vnbh6RAXQ_fe2LRtA5";
-const BUCKET            = "album";                         // nome do bucket (privado)
-const SIGNED_URL_SECS   = 3600;                            // validade dos links das fotos
+  <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+    <symbol id="bird" viewBox="0 0 100 100">
+      <ellipse cx="50" cy="58" rx="30" ry="25" fill="#e4572e" />
+      <circle cx="68" cy="38" r="16" fill="#e4572e" />
+      <path d="M82 36 L98 41 L82 46 Z" fill="#f4b942" />
+      <circle cx="72" cy="35" r="3.2" fill="#2b3a2e" />
+      <circle cx="73" cy="34" r="1" fill="#fff" />
+      <path d="M22 52 L2 38 L8 62 L24 66 Z" fill="#3f7d58" />
+      <path d="M38 55 Q52 40 64 62 Q50 74 38 55 Z" fill="#c8431f" />
+      <path
+        d="M44 82 L44 92 M56 82 L56 92"
+        stroke="#f4b942"
+        stroke-width="3"
+        stroke-linecap="round"
+      />
+    </symbol>
+  </svg>
 
-const $ = (id) => document.getElementById(id);
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+  // Use a chave pública do projeto. Nunca coloque a chave service_role no HTML.
+  const SUPABASE_URL = "https://onvsyopaxskqpvdcctcp.supabase.co";
+  const SUPABASE_ANON_KEY = "COLE_AQUI_A_ANON_KEY";
+  const BUCKET = "album";
 
-/* ---------- Acesso direto pelo QR code ----------
-   O QR aponta para  https://seusite/#a=EMAIL&k=SENHA
-   (o "#" nunca é enviado ao servidor). A página entra sozinha
-   com a conta das famílias e apaga o trecho da barra de endereço. */
-async function loginPeloQR() {
-  if (!location.hash || location.hash.length < 3) return false;
-  const p = new URLSearchParams(location.hash.slice(1));
-  const email = p.get("a"), senha = p.get("k");
-  if (!email || !senha) return false;
-  history.replaceState(null, "", location.pathname + location.search);
-  const { error } = await sb.auth.signInWithPassword({ email, password: senha });
-  return !error;
-}
+  const $ = (id) => document.getElementById(id);
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* ---------- Login manual ---------- */
-$("loginForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const btn = $("btnEntrar"), msg = $("loginMsg");
-  btn.disabled = true; msg.textContent = "";
-  const { error } = await sb.auth.signInWithPassword({
-    email: $("email").value.trim(),
-    password: $("senha").value
-  });
-  btn.disabled = false;
-  if (error) { msg.textContent = "E-mail ou senha incorretos. Tente novamente."; return; }
-  await mostrarAlbum();
-});
+  // O QR usa os parâmetros a (e-mail) e k (senha) no fragmento da URL.
+  async function loginPeloQR() {
+    if (!location.hash || location.hash.length < 3) return false;
 
-$("btnSair").addEventListener("click", async () => {
-  await sb.auth.signOut();
-  location.reload();
-});
+    const parametros = new URLSearchParams(location.hash.slice(1));
+    const email = parametros.get("a");
+    const senha = parametros.get("k");
 
-/* ---------- Álbum ---------- */
-function legenda(nomeArquivo) {
-  // "03-bem-te-vi.jpg" → "Bem te vi"
-  let t = nomeArquivo.replace(/\.[^.]+$/, "").replace(/^\d+[\s._-]*/, "").replace(/[_-]+/g, " ").trim();
-  if (!t) t = "Passarinho";
-  return t.charAt(0).toUpperCase() + t.slice(1);
-}
+    if (!email || !senha) return false;
 
-async function mostrarAlbum() {
-  $("login").hidden = true;
-  $("app").hidden = false;
-  const area = $("album");
-  area.innerHTML = '<div class="state">Carregando as fotos… 🐦</div>';
+    history.replaceState(null, "", location.pathname + location.search);
+    const { error } = await sb.auth.signInWithPassword({
+      email,
+      password: senha
+    });
 
-  const { data: arquivos, error } = await sb.storage.from(BUCKET)
-    .list("", { limit: 500, sortBy: { column: "name", order: "asc" } });
-
-  if (error) { area.innerHTML = '<div class="state">Não foi possível carregar o álbum agora. Tente novamente em instantes.</div>'; return; }
-
-  const imagens = (arquivos || []).filter(f => f.id && /\.(jpe?g|png|webp|gif|avif)$/i.test(f.name));
-  if (!imagens.length) { area.innerHTML = '<div class="state">Em breve as fotos aparecerão aqui! 🌱</div>'; return; }
-
-  const { data: urls, error: e2 } = await sb.storage.from(BUCKET)
-    .createSignedUrls(imagens.map(f => f.name), SIGNED_URL_SECS);
-  if (e2) { area.innerHTML = '<div class="state">Não foi possível carregar as fotos agora.</div>'; return; }
-
-  area.innerHTML = "";
-  urls.forEach((u, i) => {
-    if (!u.signedUrl) return;
-    const nome = imagens.find(f => f.name === u.path)?.name || u.path;
-    const band = document.createElement("div");
-    band.className = "band";
-    band.innerHTML = `
-      <div class="band-inner">
-        <figure class="reveal"><div class="photo"><img loading="lazy" alt=""></div></figure>
-        <div class="reveal delay">
-          <div class="num"></div>
-          <div class="caption"></div>
-        </div>
-      </div>`;
-    const img = band.querySelector("img");
-    img.src = u.signedUrl;
-    img.alt = legenda(nome);
-    band.querySelector(".num").textContent = i + 1;
-    band.querySelector(".caption").textContent = legenda(nome);
-    band.querySelector(".photo").addEventListener("click", () => abrirLightbox(u.signedUrl, legenda(nome)));
-    area.appendChild(band);
-  });
-  observarReveal();
-}
-
-/* ---------- Animação ao rolar ---------- */
-function observarReveal() {
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
-  }, { threshold: 0.18, rootMargin: "0px 0px -6% 0px" });
-  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
-}
-
-/* ---------- Lightbox ---------- */
-const lb = $("lightbox");
-function abrirLightbox(src, texto) {
-  lb.querySelector("img").src = src;
-  lb.querySelector("p").textContent = texto;
-  lb.classList.add("open");
-}
-lb.addEventListener("click", () => lb.classList.remove("open"));
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") lb.classList.remove("open"); });
-
-/* ---------- Início ---------- */
-(async function init() {
-  if (SUPABASE_URL.startsWith("COLE_AQUI")) {
-    $("login").hidden = false;
-    $("loginMsg").textContent = "Configure SUPABASE_URL e SUPABASE_ANON_KEY no index.html.";
-    return;
+    return !error;
   }
-  await loginPeloQR();
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) await mostrarAlbum();
-  else $("login").hidden = false;
-})();
+
+  $("loginForm").addEventListener("submit", async (evento) => {
+    evento.preventDefault();
+
+    const botao = $("btnEntrar");
+    const mensagem = $("loginMsg");
+    botao.disabled = true;
+    mensagem.textContent = "";
+
+    const { error } = await sb.auth.signInWithPassword({
+      email: $("email").value.trim(),
+      password: $("senha").value
+    });
+
+    botao.disabled = false;
+
+    if (error) {
+      mensagem.textContent = "E-mail ou senha incorretos. Tente novamente.";
+      return;
+    }
+
+    await mostrarAlbum();
+  });
+
+  $("btnSair").addEventListener("click", async () => {
+    await sb.auth.signOut();
+    location.reload();
+  });
+
+  function legenda(nomeArquivo) {
+    let texto = nomeArquivo
+      .replace(/\.[^.]+$/, "")
+      .replace(/^\d+[\s._-]*/, "")
+      .replace(/[_-]+/g, " ")
+      .trim();
+
+    if (!texto) texto = "Passarinho";
+
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  }
+
+  async function mostrarAlbum() {
+    $("login").hidden = true;
+    $("app").hidden = false;
+
+    const area = $("album");
+    area.innerHTML = '<div class="state">Carregando as fotos… 🐦</div>';
+
+    const { data: arquivos, error } = await sb.storage
+      .from(BUCKET)
+      .list("", {
+        limit: 500,
+        sortBy: { column: "name", order: "asc" }
+      });
+
+    if (error) {
+      area.innerHTML =
+        '<div class="state">Não foi possível carregar o álbum agora. Tente novamente em instantes.</div>';
+      return;
+    }
+
+    const imagens = (arquivos || []).filter(
+      (arquivo) =>
+        arquivo.id && /\.(jpe?g|png|webp|gif|avif)$/i.test(arquivo.name)
+    );
+
+    if (!imagens.length) {
+      area.innerHTML =
+        '<div class="state">Em breve as fotos aparecerão aqui! 🌱</div>';
+      return;
+    }
+
+    const fotos = imagens.map((arquivo) => ({
+      nome: arquivo.name,
+      url: sb.storage.from(BUCKET).getPublicUrl(arquivo.name).data.publicUrl
+    }));
+
+    area.innerHTML = "";
+
+    fotos.forEach((foto, indice) => {
+      const faixa = document.createElement("div");
+      faixa.className = "band";
+      faixa.innerHTML = `
+        <div class="band-inner">
+          <figure class="reveal">
+            <div class="photo">
+              <img loading="lazy" alt="">
+            </div>
+          </figure>
+          <div class="reveal delay">
+            <div class="num"></div>
+            <div class="caption"></div>
+          </div>
+        </div>`;
+
+      const imagem = faixa.querySelector("img");
+      imagem.src = foto.url;
+      imagem.alt = legenda(foto.nome);
+      faixa.querySelector(".num").textContent = indice + 1;
+      faixa.querySelector(".caption").textContent = legenda(foto.nome);
+      faixa
+        .querySelector(".photo")
+        .addEventListener("click", () => abrirLightbox(foto.url, legenda(foto.nome)));
+
+      area.appendChild(faixa);
+    });
+
+    observarReveal();
+  }
+
+  function observarReveal() {
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        entradas.forEach((entrada) => {
+          if (entrada.isIntersecting) {
+            entrada.target.classList.add("in");
+            observador.unobserve(entrada.target);
+          }
+        });
+      },
+      { threshold: 0.18, rootMargin: "0px 0px -6% 0px" }
+    );
+
+    document.querySelectorAll(".reveal").forEach((item) => {
+      observador.observe(item);
+    });
+  }
+
+  const lightbox = $("lightbox");
+
+  function abrirLightbox(url, texto) {
+    lightbox.querySelector("img").src = url;
+    lightbox.querySelector("p").textContent = texto;
+    lightbox.classList.add("open");
+  }
+
+  lightbox.addEventListener("click", () => {
+    lightbox.classList.remove("open");
+  });
+
+  document.addEventListener("keydown", (evento) => {
+    if (evento.key === "Escape") {
+      lightbox.classList.remove("open");
+    }
+  });
+
+  const Musica = (() => {
+    const BPM = 112;
+    const PASSO = 60 / BPM / 2;
+    const VOLUME = 0.5;
+    const hz = (nota) => 440 * Math.pow(2, (nota - 69) / 12);
+
+    const COMPASSOS = [
+      { baixo: 48, acorde: [60, 64, 67] },
+      { baixo: 43, acorde: [59, 62, 67] },
+      { baixo: 45, acorde: [60, 64, 69] },
+      { baixo: 41, acorde: [60, 65, 69] }
+    ];
+
+    const MELODIA = [
+      [
+        [76, 0, 79, 76, 72, 74, 76, 0],
+        [74, 0, 79, 74, 71, 74, 79, 0],
+        [72, 0, 76, 72, 69, 72, 76, 0],
+        [77, 0, 81, 77, 72, 74, 76, 79]
+      ],
+      [
+        [79, 0, 76, 79, 84, 0, 79, 0],
+        [79, 0, 74, 79, 83, 0, 79, 0],
+        [81, 0, 76, 81, 84, 81, 76, 0],
+        [77, 0, 81, 84, 81, 77, 74, 0]
+      ]
+    ];
+
+    let ctx = null;
+    let master = null;
+    let ruido = null;
+    let ligada = false;
+    let timer = null;
+    let tSuspende = null;
+    let proximo = 0;
+    let passo = 0;
+    let tPio = 0;
+
+    function montar() {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return false;
+
+      ctx = new AudioContext();
+      master = ctx.createGain();
+      master.gain.value = 0;
+      master.connect(ctx.destination);
+
+      ruido = ctx.createBuffer(
+        1,
+        Math.floor(ctx.sampleRate * 0.05),
+        ctx.sampleRate
+      );
+      const amostras = ruido.getChannelData(0);
+
+      for (let i = 0; i < amostras.length; i++) {
+        amostras[i] = Math.random() * 2 - 1;
+      }
+
+      return true;
+    }
+
+    function nota(frequencia, tempo, duracao, intensidade, tipo) {
+      const oscilador = ctx.createOscillator();
+      const volume = ctx.createGain();
+
+      oscilador.type = tipo;
+      oscilador.frequency.value = frequencia;
+      volume.gain.setValueAtTime(0.0001, tempo);
+      volume.gain.exponentialRampToValueAtTime(intensidade, tempo + 0.008);
+      volume.gain.exponentialRampToValueAtTime(0.0001, tempo + duracao);
+      oscilador.connect(volume);
+      volume.connect(master);
+      oscilador.start(tempo);
+      oscilador.stop(tempo + duracao + 0.05);
+    }
+
+    function tique(tempo) {
+      const fonte = ctx.createBufferSource();
+      const filtro = ctx.createBiquadFilter();
+      const volume = ctx.createGain();
+
+      fonte.buffer = ruido;
+      filtro.type = "highpass";
+      filtro.frequency.value = 6000;
+      volume.gain.value = 0.018;
+      fonte.connect(filtro);
+      filtro.connect(volume);
+      volume.connect(master);
+      fonte.start(tempo);
+    }
+
+    function piar(tempo) {
+      const frequenciaBase = 2600 + Math.random() * 1400;
+      const quantidade = 2 + Math.floor(Math.random() * 2);
+
+      for (let i = 0; i < quantidade; i++) {
+        const inicio = tempo + i * 0.13;
+        const frequencia = frequenciaBase * (1 + i * 0.06);
+        const oscilador = ctx.createOscillator();
+        const volume = ctx.createGain();
+
+        oscilador.type = "sine";
+        oscilador.frequency.setValueAtTime(frequencia, inicio);
+        oscilador.frequency.exponentialRampToValueAtTime(
+          frequencia * 1.3,
+          inicio + 0.07
+        );
+        volume.gain.setValueAtTime(0.0001, inicio);
+        volume.gain.exponentialRampToValueAtTime(0.045, inicio + 0.012);
+        volume.gain.exponentialRampToValueAtTime(0.0001, inicio + 0.09);
+        oscilador.connect(volume);
+        volume.connect(master);
+        oscilador.start(inicio);
+        oscilador.stop(inicio + 0.11);
+      }
+    }
+
+    function tocar(passo, tempo) {
+      const frase = Math.floor(passo / 32) % 2;
+      const numeroCompasso = Math.floor(passo / 8) % 4;
+      const posicao = passo % 8;
+      const compasso = COMPASSOS[numeroCompasso];
+      const notaMelodica = MELODIA[frase][numeroCompasso][posicao];
+
+      if (notaMelodica) {
+        nota(hz(notaMelodica), tempo, 0.5, 0.16, "triangle");
+        nota(hz(notaMelodica) * 4, tempo, 0.1, 0.03, "sine");
+      }
+
+      if (posicao === 0 || posicao === 4) {
+        nota(hz(compasso.baixo), tempo, 0.35, 0.16, "triangle");
+      }
+
+      if (posicao === 2 || posicao === 6) {
+        compasso.acorde.forEach((frequencia, indice) => {
+          nota(
+            hz(frequencia),
+            tempo + indice * 0.012,
+            0.22,
+            0.045,
+            "triangle"
+          );
+        });
+      }
+
+      if (posicao % 2 === 1) tique(tempo);
+
+      if (passo >= tPio && posicao === 3) {
+        piar(tempo);
+        tPio = passo + 24 + Math.floor(Math.random() * 24);
+      }
+    }
+
+    function agendar() {
+      while (proximo < ctx.currentTime + 0.25) {
+        tocar(passo, proximo);
+        proximo += PASSO;
+        passo++;
+      }
+    }
+
+    async function ligar() {
+      if (ligada) return true;
+      if (!ctx && !montar()) return false;
+
+      clearTimeout(tSuspende);
+
+      try {
+        await ctx.resume();
+      } catch (erro) {
+        return false;
+      }
+
+      ligada = true;
+      passo = 0;
+      tPio = 16;
+      proximo = ctx.currentTime + 0.1;
+      master.gain.cancelScheduledValues(ctx.currentTime);
+      master.gain.setTargetAtTime(VOLUME, ctx.currentTime, 0.3);
+      timer = setInterval(agendar, 80);
+
+      return true;
+    }
+
+    function desligar() {
+      if (!ligada) return;
+
+      ligada = false;
+      clearInterval(timer);
+      master.gain.cancelScheduledValues(ctx.currentTime);
+      master.gain.setTargetAtTime(0, ctx.currentTime, 0.2);
+      tSuspende = setTimeout(() => {
+        if (!ligada) ctx.suspend();
+      }, 1500);
+    }
+
+    return { ligar, desligar, get ligada() { return ligada; } };
+  })();
+
+  (function iniciarBotaoMusica() {
+    const botao = $("btnMusica");
+    const CHAVE_MUSICA = "album_musica";
+
+    const salvarPreferencia = (valor) => {
+      try {
+        localStorage.setItem(CHAVE_MUSICA, valor);
+      } catch (erro) {}
+    };
+
+    const lerPreferencia = () => {
+      try {
+        return localStorage.getItem(CHAVE_MUSICA);
+      } catch (erro) {
+        return null;
+      }
+    };
+
+    const atualizarBotao = () => {
+      botao.setAttribute("aria-pressed", Musica.ligada ? "true" : "false");
+      botao.querySelector(".t").textContent = Musica.ligada
+        ? "Música: ligada"
+        : "Música: desligada";
+      botao.querySelector(".i").textContent = Musica.ligada ? "🔊" : "🔇";
+    };
+
+    botao.addEventListener("click", async () => {
+      if (Musica.ligada) {
+        Musica.desligar();
+        salvarPreferencia("off");
+      } else {
+        await Musica.ligar();
+        salvarPreferencia("on");
+      }
+
+      atualizarBotao();
+    });
+
+    atualizarBotao();
+
+    if (lerPreferencia() === "off") return;
+
+    const iniciarMusica = async (evento) => {
+      if (
+        evento.target &&
+        evento.target.closest &&
+        evento.target.closest("#btnMusica")
+      ) {
+        return;
+      }
+
+      ["pointerdown", "keydown", "touchend"].forEach((tipo) => {
+        document.removeEventListener(tipo, iniciarMusica, true);
+      });
+
+      if (await Musica.ligar()) atualizarBotao();
+    };
+
+    ["pointerdown", "keydown", "touchend"].forEach((tipo) => {
+      document.addEventListener(tipo, iniciarMusica, true);
+    });
+  })();
+
+  (async function iniciarPagina() {
+    if (SUPABASE_URL.startsWith("COLE_AQUI")) {
+      $("login").hidden = false;
+      $("loginMsg").textContent =
+        "Configure SUPABASE_URL e SUPABASE_ANON_KEY no index.html.";
+      return;
+    }
+
+    await mostrarAlbum();
+  })();
 </script>
 </body>
 </html>
