@@ -943,14 +943,14 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-  // Use a chave pública do projeto. Nunca coloque a chave service_role no HTML.
+  
   const SUPABASE_URL = "https://onvsyopaxskqpvdcctcp.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_C7D_EQn_oKNm2Vnbh6RAXQ_fe2LRtA5";
   const BUCKET = "album";
   const EXTENSAO_IMAGEM = /\.(jpe?g|png|webp|gif|avif)$/i;
   const EXTENSAO_VIDEO = /\.(mp4|webm|ogv|ogg)$/i;
 
-  // Use o caminho das pastas no bucket como chave, por exemplo: "TURMA/Ana".
+  
   const PROJETOS = {
     "TURMA/Bernardo Antonio": "Bernardo Antonio fez uma pesquisa sobre o Pelicano.",
     "TURMA/Bernardo Fortunato": "Bernardo Fortunato fez uma pesquisa sobre a Cegonha",
@@ -995,7 +995,7 @@
     photoZoom.querySelector("img").removeAttribute("src");
   });
 
-  // O QR usa os parâmetros a (e-mail) e k (senha) no fragmento da URL.
+ 
   async function loginPeloQR() {
     if (!location.hash || location.hash.length < 3) return false;
 
