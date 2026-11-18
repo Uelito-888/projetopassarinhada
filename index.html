@@ -943,14 +943,15 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-  
+
   const SUPABASE_URL = "https://onvsyopaxskqpvdcctcp.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_C7D_EQn_oKNm2Vnbh6RAXQ_fe2LRtA5";
   const BUCKET = "album";
   const EXTENSAO_IMAGEM = /\.(jpe?g|png|webp|gif|avif)$/i;
   const EXTENSAO_VIDEO = /\.(mp4|webm|ogv|ogg)$/i;
+  let tokenRenderizacao = 0;
 
-  
+
   const PROJETOS = {
     "TURMA/Bernardo Antonio": "Bernardo Antonio fez uma pesquisa sobre o Pelicano.",
     "TURMA/Bernardo Fortunato": "Bernardo Fortunato fez uma pesquisa sobre a Cegonha",
@@ -977,6 +978,8 @@
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   const photoZoom = $("photoZoom");
 
+  history.replaceState({ albumPath: [] }, "", location.href);
+
   function ampliarFoto(url, textoAlternativo) {
     const imagemAmpliada = photoZoom.querySelector("img");
     imagemAmpliada.src = url;
@@ -995,7 +998,14 @@
     photoZoom.querySelector("img").removeAttribute("src");
   });
 
- 
+  window.addEventListener("popstate", (evento) => {
+    const caminho = Array.isArray(evento.state?.albumPath)
+      ? evento.state.albumPath
+      : [];
+    abrirPasta(caminho);
+  });
+
+
   async function loginPeloQR() {
     if (!location.hash || location.hash.length < 3) return false;
 
@@ -1091,6 +1101,11 @@
     return caminho ? `${caminho}/${nome}` : nome;
   }
 
+  function navegarParaPasta(caminho) {
+    history.pushState({ albumPath: caminho }, "", location.href);
+    return abrirPasta(caminho);
+  }
+
   function criarCartao(nome, foto, descricao, aoClicar, indice) {
     const faixa = document.createElement("div");
     faixa.className = "band";
@@ -1137,7 +1152,7 @@
       voltar.className = "back-button";
       voltar.type = "button";
       voltar.textContent = "← Voltar";
-      voltar.addEventListener("click", () => abrirPasta(caminho.slice(0, -1)));
+      voltar.addEventListener("click", () => history.back());
       navegacao.appendChild(voltar);
     }
 
@@ -1150,11 +1165,13 @@
   }
 
   async function abrirPasta(caminho) {
+    const token = ++tokenRenderizacao;
     const area = $("album");
     area.innerHTML = '<div class="state">Carregando as fotos… 🐦</div>';
 
     try {
       const arquivos = await listarPasta(caminho.join("/"));
+      if (token !== tokenRenderizacao) return;
       area.innerHTML = "";
       mostrarNavegacao(area, caminho);
 
@@ -1175,7 +1192,7 @@
             nome,
             { url },
             "Toque na foto para ver as crianças",
-            () => abrirPasta([pasta ? pasta.name : nomePasta]),
+            () => navegarParaPasta([pasta ? pasta.name : nomePasta]),
             indice
           ));
         });
@@ -1194,6 +1211,7 @@
           };
         }));
 
+        if (token !== tokenRenderizacao) return;
         if (!criancas.length) {
           area.insertAdjacentHTML("beforeend", '<div class="state">Ainda não há pastas de crianças nesta turma.</div>');
           return;
@@ -1204,7 +1222,7 @@
             crianca.nome,
             crianca.foto,
             "Toque para ver o projeto e as fotos",
-            () => abrirPasta([...caminho, crianca.caminho.split("/").pop()]),
+            () => navegarParaPasta([...caminho, crianca.caminho.split("/").pop()]),
             indice
           ));
         });
