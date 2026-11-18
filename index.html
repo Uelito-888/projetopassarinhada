@@ -286,12 +286,25 @@
 
   .photo {
     position: relative;
+    display: block;
+    width: 100%;
     overflow: hidden;
+    padding: 0;
+    border: 0;
     aspect-ratio: 16 / 9;
     border-radius: var(--radius);
     background: #e9e1cb;
     box-shadow: 0 14px 40px rgba(43, 58, 46, 0.2);
-    cursor: zoom-in;
+    color: var(--ink);
+    cursor: pointer;
+    font: inherit;
+    text-align: center;
+  }
+
+  .photo:focus-visible,
+  .back-button:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
   }
 
   .photo img {
@@ -304,6 +317,144 @@
 
   .photo:hover img {
     transform: scale(1.04);
+  }
+
+  .photo:disabled {
+    cursor: default;
+    opacity: 1;
+  }
+
+  .photo:disabled:hover img {
+    transform: none;
+  }
+
+  .photo-empty {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+    place-items: center;
+    color: var(--muted);
+  }
+
+  .album-navigation {
+    display: flex;
+    width: min(1200px, 100%);
+    align-items: center;
+    gap: 16px;
+    margin: 0 auto;
+    padding: 28px clamp(16px, 5vw, 64px) 0;
+  }
+
+  .album-navigation h2 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+  }
+
+  .back-button {
+    flex: 0 0 auto;
+    padding: 9px 16px;
+    border: 2px solid #d8d0b8;
+    border-radius: 99px;
+    background: #fff;
+    color: var(--ink);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .project {
+    width: min(1200px, calc(100% - 32px));
+    margin: 28px auto 0;
+    padding: clamp(20px, 4vw, 36px);
+    border-radius: var(--radius);
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(43, 58, 46, 0.1);
+  }
+
+  .project h2 {
+    margin-bottom: 10px;
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+  }
+
+  .project p {
+    color: var(--muted);
+    white-space: pre-line;
+  }
+
+  .child-gallery {
+    display: grid;
+    width: min(1200px, calc(100% - 32px));
+    gap: 24px;
+    margin: 28px auto;
+  }
+
+  .child-photo {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    padding: 0;
+    border: 0;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius);
+    background: #e9e1cb;
+    box-shadow: 0 14px 40px rgba(43, 58, 46, 0.2);
+    cursor: zoom-in;
+  }
+
+  .child-photo:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .child-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.25s ease;
+  }
+
+  .child-photo:hover img {
+    transform: scale(1.03);
+  }
+
+  .photo-zoom-dialog {
+    width: fit-content;
+    max-width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+    margin: auto;
+    padding: 0;
+    border: 0;
+    outline: none;
+    overflow: visible;
+    background: transparent;
+  }
+
+  .photo-zoom-dialog::backdrop {
+    background: rgba(15, 22, 17, 0.88);
+  }
+
+  .photo-zoom-dialog img {
+    display: block;
+    max-width: 100%;
+    max-height: calc(100vh - 24px);
+    object-fit: contain;
+  }
+
+  .child-photo .photo-empty {
+    height: 100%;
+  }
+
+  .child-video {
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: #e9e1cb;
+    box-shadow: 0 14px 40px rgba(43, 58, 46, 0.2);
+  }
+
+  .child-video video {
+    display: block;
+    width: 100%;
+    max-height: 80vh;
   }
 
   .caption {
@@ -401,35 +552,6 @@
     color: var(--leaf);
   }
 
-  /* Foto ampliada */
-  #lightbox {
-    position: fixed;
-    inset: 0;
-    z-index: 60;
-    display: none;
-    padding: 20px;
-    place-items: center;
-    background: rgba(15, 22, 17, 0.92);
-    cursor: zoom-out;
-  }
-
-  #lightbox.open {
-    display: grid;
-  }
-
-  #lightbox img {
-    max-width: 100%;
-    max-height: 88vh;
-    border-radius: 12px;
-  }
-
-  #lightbox p {
-    margin-top: 12px;
-    color: #fff;
-    font-size: 1.1rem;
-    text-align: center;
-  }
-
   /* Controle da música */
   #btnMusica {
     position: fixed;
@@ -492,7 +614,7 @@
       <svg class="bird" viewBox="0 0 100 100" aria-hidden="true">
         <use href="#bird" />
       </svg>
-      <h1>Nossos <span>Passarinhos</span></h1>
+      <h1>Projeto <span>Passarinhada</span></h1>
       <p>Um álbum feito com muito carinho pelas crianças da nossa sala.</p>
       <div class="scroll-hint">role para baixo ↓</div>
     </header>
@@ -515,12 +637,9 @@
     <span class="t">Música: desligada</span>
   </button>
 
-  <div id="lightbox" role="dialog" aria-modal="true">
-    <div>
-      <img alt="">
-      <p></p>
-    </div>
-  </div>
+  <dialog class="photo-zoom-dialog" id="photoZoom">
+    <img alt="">
+  </dialog>
 
   <svg width="0" height="0" style="position: absolute" aria-hidden="true">
     <symbol id="bird" viewBox="0 0 100 100">
@@ -776,6 +895,12 @@
       botao.querySelector(".i").textContent = Musica.ligada ? "🔊" : "🔇";
     };
 
+    document.addEventListener("album:video-iniciado", () => {
+      Musica.desligar();
+      salvarPreferencia("off");
+      atualizarBotao();
+    });
+
     botao.addEventListener("click", async () => {
       if (Musica.ligada) {
         Musica.desligar();
@@ -822,9 +947,53 @@
   const SUPABASE_URL = "https://onvsyopaxskqpvdcctcp.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_C7D_EQn_oKNm2Vnbh6RAXQ_fe2LRtA5";
   const BUCKET = "album";
+  const EXTENSAO_IMAGEM = /\.(jpe?g|png|webp|gif|avif)$/i;
+  const EXTENSAO_VIDEO = /\.(mp4|webm|ogv|ogg)$/i;
+
+  // Use o caminho das pastas no bucket como chave, por exemplo: "TURMA/Ana".
+  const PROJETOS = {
+    "TURMA/Bernardo Antonio": "Bernardo Antonio fez uma pesquisa sobre o Pelicano.",
+    "TURMA/Bernardo Fortunato": "Bernardo Fortunato fez uma pesquisa sobre a Cegonha",
+    "TURMA/Enzo": "Enzo fez uma pesquisa sobre o Pica-pau",
+    "TURMA/Esther": "Esther fez uma pesquisa sobre o Tucano",
+    "TURMA/Gael": "Gael fez uma pesquisa sobre o Bico-de-sapato",
+    "TURMA/Heitor": "Heitor fez uma pesquisa sobre o Beija-flor",
+    "TURMA/Helena": "Helena fez uma pesquisa sobre o Beija-flor",
+    "TURMA/Henry": "Henry fez uma pesquisa sobre o Azulão",
+    "TURMA/Joaquim": "Joaquim fez uma pesquisa sobre o Beija-flor",
+    "TURMA/Jose Felipe": "Jose Felipe fez uma pesquisa sobre a Maritaca",
+    "TURMA/Liz": "Liz fez uma pesquisa sobre a Tesourinha",
+    "TURMA/Manuela": "Manuela fez uma pesquisa sobre o Beija-flor",
+    "TURMA/Maria Clara": "Maria Clara fez uma pesquisa sobre Tucano",
+    "TURMA/Maria Eduarda": "Maria Eduarda fez uma pesquisa sobre o Bem-te-vi",
+    "TURMA/Marianne": "Marianne fez uma pesquisa sobre a Maritaca",
+    "TURMA/Matheus": "Matheus fez uma pesquisa sobre a Águia",
+    "TURMA/Rafael": "Rafael fez uma pesquisa sobre o Canarinho",
+    "TURMA/Sophia": "Sophia fez uma pesquisa sobre a Coruja",
+    "TURMA/Vitor": "Vitor fez uma pesquisa sobre o João-de-barro"
+  };
 
   const $ = (id) => document.getElementById(id);
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const photoZoom = $("photoZoom");
+
+  function ampliarFoto(url, textoAlternativo) {
+    const imagemAmpliada = photoZoom.querySelector("img");
+    imagemAmpliada.src = url;
+    imagemAmpliada.alt = textoAlternativo;
+    photoZoom.showModal();
+  }
+
+  photoZoom.addEventListener("cancel", (evento) => {
+    evento.preventDefault();
+    photoZoom.close();
+  });
+  photoZoom.addEventListener("click", (evento) => {
+    if (evento.target === photoZoom) photoZoom.close();
+  });
+  photoZoom.addEventListener("close", () => {
+    photoZoom.querySelector("img").removeAttribute("src");
+  });
 
   // O QR usa os parâmetros a (e-mail) e k (senha) no fragmento da URL.
   async function loginPeloQR() {
@@ -865,7 +1034,9 @@
       return;
     }
 
-    await mostrarAlbum();
+    $("login").hidden = true;
+    $("app").hidden = false;
+    await abrirPasta([]);
   });
 
   $("btnSair").addEventListener("click", async () => {
@@ -885,79 +1056,245 @@
     return texto.charAt(0).toUpperCase() + texto.slice(1);
   }
 
-  async function mostrarAlbum() {
-    $("login").hidden = true;
-    $("app").hidden = false;
-
-    const area = $("album");
-    area.innerHTML = '<div class="state">Carregando as fotos… 🐦</div>';
-
-    const { data: arquivos, error } = await sb.storage
+  async function listarPasta(caminho) {
+    const { data, error } = await sb.storage
       .from(BUCKET)
-      .list("", {
+      .list(caminho, {
         limit: 500,
         sortBy: { column: "name", order: "asc" }
       });
 
     if (error) {
-      console.error("Erro ao listar fotos:", error);
-      area.innerHTML =
-        '<div class="state">Não foi possível carregar o álbum agora. Tente novamente em instantes.' +
-        '<br><small></small></div>';
-      area.querySelector("small").textContent = "Detalhe técnico: " + (error.message || error);
-      return;
+      throw new Error(error.message || String(error));
     }
 
-    const imagens = (arquivos || []).filter(
-      (arquivo) =>
-        arquivo.id && /\.(jpe?g|png|webp|gif|avif)$/i.test(arquivo.name)
-    );
-
-    if (!imagens.length) {
-      area.innerHTML =
-        '<div class="state">Em breve as fotos aparecerão aqui! 🌱</div>';
-      return;
-    }
-
-    const fotos = imagens.map((arquivo) => ({
-      nome: arquivo.name,
-      url: sb.storage.from(BUCKET).getPublicUrl(arquivo.name).data.publicUrl
-    }));
-
-    area.innerHTML = "";
-
-    fotos.forEach((foto, indice) => {
-      const faixa = document.createElement("div");
-      faixa.className = "band";
-      faixa.innerHTML = `
-        <div class="band-inner">
-          <figure class="reveal">
-            <div class="photo">
-              <img loading="lazy" alt="">
-            </div>
-          </figure>
-          <div class="reveal delay">
-            <div class="num"></div>
-            <div class="caption"></div>
-          </div>
-        </div>`;
-
-      const imagem = faixa.querySelector("img");
-      imagem.src = foto.url;
-      imagem.alt = legenda(foto.nome);
-      faixa.querySelector(".num").textContent = indice + 1;
-      faixa.querySelector(".caption").textContent = legenda(foto.nome);
-      faixa
-        .querySelector(".photo")
-        .addEventListener("click", () => abrirLightbox(foto.url, legenda(foto.nome)));
-
-      area.appendChild(faixa);
-    });
-
-    observarReveal();
+    return data || [];
   }
 
-  function observarReveal() {
+  function ehImagem(arquivo) {
+    return Boolean(arquivo.id && EXTENSAO_IMAGEM.test(arquivo.name));
+  }
+
+  function ehVideo(arquivo) {
+    return Boolean(arquivo.id && EXTENSAO_VIDEO.test(arquivo.name));
+  }
+
+  function ehPasta(arquivo) {
+    return !arquivo.id && !EXTENSAO_IMAGEM.test(arquivo.name);
+  }
+
+  function mesmaChave(a, b) {
+    return a.trim().toLocaleLowerCase("pt-BR") === b.trim().toLocaleLowerCase("pt-BR");
+  }
+
+  function caminhoDoArquivo(caminho, nome) {
+    return caminho ? `${caminho}/${nome}` : nome;
+  }
+
+  function criarCartao(nome, foto, descricao, aoClicar, indice) {
+    const faixa = document.createElement("div");
+    faixa.className = "band";
+    faixa.innerHTML = `
+      <div class="band-inner">
+        <figure class="reveal">
+          <button class="photo" type="button">
+            <span class="photo-empty">Foto não encontrada</span>
+          </button>
+        </figure>
+        <div class="reveal delay">
+          <div class="num"></div>
+          <div class="caption">
+            <span class="caption-title"></span>
+            <small></small>
+          </div>
+        </div>
+      </div>`;
+
+    const botaoFoto = faixa.querySelector(".photo");
+    if (foto) {
+      const imagem = document.createElement("img");
+      imagem.src = foto.url;
+      imagem.alt = nome;
+      imagem.loading = "lazy";
+      botaoFoto.replaceChildren(imagem);
+    }
+
+    botaoFoto.setAttribute("aria-label", aoClicar ? `Abrir ${nome}` : nome);
+    botaoFoto.disabled = !aoClicar;
+    if (aoClicar) botaoFoto.addEventListener("click", aoClicar);
+    faixa.querySelector(".num").textContent = indice + 1;
+    faixa.querySelector(".caption-title").textContent = nome;
+    faixa.querySelector("small").textContent = descricao;
+    return faixa;
+  }
+
+  function mostrarNavegacao(area, caminho) {
+    const navegacao = document.createElement("div");
+    navegacao.className = "album-navigation";
+
+    if (caminho.length) {
+      const voltar = document.createElement("button");
+      voltar.className = "back-button";
+      voltar.type = "button";
+      voltar.textContent = "← Voltar";
+      voltar.addEventListener("click", () => abrirPasta(caminho.slice(0, -1)));
+      navegacao.appendChild(voltar);
+    }
+
+    const titulo = document.createElement("h2");
+    titulo.textContent = caminho.length
+      ? legenda(caminho[caminho.length - 1])
+      : "Álbum da turma";
+    navegacao.appendChild(titulo);
+    area.appendChild(navegacao);
+  }
+
+  async function abrirPasta(caminho) {
+    const area = $("album");
+    area.innerHTML = '<div class="state">Carregando as fotos… 🐦</div>';
+
+    try {
+      const arquivos = await listarPasta(caminho.join("/"));
+      area.innerHTML = "";
+      mostrarNavegacao(area, caminho);
+
+      if (caminho.length === 0) {
+        const imagens = arquivos.filter(ehImagem);
+        const pastas = arquivos.filter(ehPasta);
+        if (!imagens.length) {
+          area.insertAdjacentHTML("beforeend", '<div class="state">Em breve as fotos aparecerão aqui! 🌱</div>');
+          return;
+        }
+
+        imagens.forEach((arquivo, indice) => {
+          const nome = legenda(arquivo.name);
+          const nomePasta = arquivo.name.replace(/\.[^.]+$/, "");
+          const pasta = pastas.find((item) => mesmaChave(item.name, nomePasta));
+          const url = sb.storage.from(BUCKET).getPublicUrl(arquivo.name).data.publicUrl;
+          area.appendChild(criarCartao(
+            nome,
+            { url },
+            "Toque na foto para ver as crianças",
+            () => abrirPasta([pasta ? pasta.name : nomePasta]),
+            indice
+          ));
+        });
+      } else if (caminho.length === 1) {
+        const pastas = arquivos.filter(ehPasta);
+        const criancas = await Promise.all(pastas.map(async (pasta) => {
+          const caminhoCrianca = caminhoDoArquivo(caminho.join("/"), pasta.name);
+          const conteudo = await listarPasta(caminhoCrianca);
+          const primeiraFoto = conteudo.find(ehImagem);
+          return {
+            nome: legenda(pasta.name),
+            caminho: caminhoCrianca,
+            foto: primeiraFoto
+              ? { url: sb.storage.from(BUCKET).getPublicUrl(caminhoDoArquivo(caminhoCrianca, primeiraFoto.name)).data.publicUrl }
+              : null
+          };
+        }));
+
+        if (!criancas.length) {
+          area.insertAdjacentHTML("beforeend", '<div class="state">Ainda não há pastas de crianças nesta turma.</div>');
+          return;
+        }
+
+        criancas.forEach((crianca, indice) => {
+          area.appendChild(criarCartao(
+            crianca.nome,
+            crianca.foto,
+            "Toque para ver o projeto e as fotos",
+            () => abrirPasta([...caminho, crianca.caminho.split("/").pop()]),
+            indice
+          ));
+        });
+      } else {
+        const nomeCrianca = legenda(caminho[caminho.length - 1]);
+        const chaveProjeto = caminho.join("/");
+        const descricaoProjeto = Object.entries(PROJETOS).find(([chave]) =>
+          mesmaChave(chave, chaveProjeto)
+        );
+        const projeto = document.createElement("section");
+        projeto.className = "project";
+        const tituloProjeto = document.createElement("h2");
+        tituloProjeto.textContent = "Projeto";
+        const textoProjeto = document.createElement("p");
+        textoProjeto.textContent = descricaoProjeto
+          ? descricaoProjeto[1]
+          : "Adicione a descrição deste projeto no objeto PROJETOS, no index.html.";
+        projeto.append(tituloProjeto, textoProjeto);
+        area.appendChild(projeto);
+
+        const imagens = arquivos.filter(ehImagem);
+        const videos = arquivos.filter(ehVideo);
+        const midias = document.createElement("div");
+        midias.className = "child-gallery";
+        imagens.forEach((arquivo) => {
+          const caminhoFoto = caminhoDoArquivo(caminho.join("/"), arquivo.name);
+          const url = sb.storage.from(BUCKET).getPublicUrl(caminhoFoto).data.publicUrl;
+          const figura = document.createElement("button");
+          figura.className = "child-photo reveal";
+          figura.type = "button";
+          figura.setAttribute("aria-label", `Ampliar foto de ${nomeCrianca}`);
+          const imagem = document.createElement("img");
+          imagem.src = url;
+          imagem.alt = `Foto de ${nomeCrianca}`;
+          imagem.loading = "lazy";
+          figura.addEventListener("click", () => ampliarFoto(url, imagem.alt));
+          imagem.addEventListener("error", () => {
+            const aviso = document.createElement("span");
+            aviso.className = "photo-empty";
+            aviso.textContent = "Não foi possível carregar esta foto. Confira o arquivo e a pasta no Supabase.";
+            figura.replaceChildren(aviso);
+          }, { once: true });
+          figura.appendChild(imagem);
+          midias.appendChild(figura);
+        });
+
+        videos.forEach((arquivo) => {
+          const caminhoVideo = caminhoDoArquivo(caminho.join("/"), arquivo.name);
+          const url = sb.storage.from(BUCKET).getPublicUrl(caminhoVideo).data.publicUrl;
+          const figura = document.createElement("figure");
+          figura.className = "child-video reveal";
+          const video = document.createElement("video");
+          video.src = url;
+          video.controls = true;
+          video.preload = "metadata";
+          video.playsInline = true;
+          video.setAttribute("aria-label", `Vídeo de ${nomeCrianca}`);
+          video.addEventListener("play", () => {
+            document.dispatchEvent(new Event("album:video-iniciado"));
+          });
+          video.addEventListener("error", () => {
+            const aviso = document.createElement("figcaption");
+            aviso.className = "photo-empty";
+            aviso.textContent = "Não foi possível carregar este vídeo. Confira se o arquivo é MP4 ou WebM e está na pasta da criança.";
+            figura.replaceChildren(aviso);
+          }, { once: true });
+          figura.appendChild(video);
+          midias.appendChild(figura);
+        });
+
+        if (!imagens.length && !videos.length) {
+          area.insertAdjacentHTML("beforeend", '<div class="state">Ainda não há fotos ou vídeos para esta criança.</div>');
+        } else {
+          area.appendChild(midias);
+        }
+      }
+
+      observarReveal(area);
+    } catch (erro) {
+      console.error("Erro ao carregar esta parte do álbum:", erro);
+      area.innerHTML = "";
+      mostrarNavegacao(area, caminho);
+      const estado = document.createElement("div");
+      estado.className = "state";
+      estado.textContent = `Não foi possível carregar esta parte do álbum. Detalhe: ${erro.message}`;
+      area.appendChild(estado);
+    }
+  }
+
+  function observarReveal(area) {
     const observador = new IntersectionObserver(
       (entradas) => {
         entradas.forEach((entrada) => {
@@ -970,28 +1307,10 @@
       { threshold: 0.18, rootMargin: "0px 0px -6% 0px" }
     );
 
-    document.querySelectorAll(".reveal").forEach((item) => {
+    area.querySelectorAll(".reveal").forEach((item) => {
       observador.observe(item);
     });
   }
-
-  const lightbox = $("lightbox");
-
-  function abrirLightbox(url, texto) {
-    lightbox.querySelector("img").src = url;
-    lightbox.querySelector("p").textContent = texto;
-    lightbox.classList.add("open");
-  }
-
-  lightbox.addEventListener("click", () => {
-    lightbox.classList.remove("open");
-  });
-
-  document.addEventListener("keydown", (evento) => {
-    if (evento.key === "Escape") {
-      lightbox.classList.remove("open");
-    }
-  });
 
   (async function iniciarPagina() {
     if (SUPABASE_URL.startsWith("COLE_AQUI") || SUPABASE_ANON_KEY.startsWith("COLE_AQUI")) {
@@ -1001,7 +1320,9 @@
       return;
     }
 
-    await mostrarAlbum();
+    $("login").hidden = true;
+    $("app").hidden = false;
+    await abrirPasta([]);
   })();
 </script>
 </body>
