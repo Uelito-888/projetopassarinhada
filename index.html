@@ -1266,8 +1266,31 @@
     "TURMA/Rafael": { descricao: "Rafael pesquisou o Canarinho.", aves: ["canarinho"] },
     "TURMA/Sophia": { descricao: "Sophia pesquisou a Coruja.", aves: ["coruja"] },
     "TURMA/Vitor": { descricao: "Vitor pesquisou o João-de-barro.", aves: ["joao_de_barro"] },
-    "REGISTROS/Mapa mental": { descricao: "Registro do mapa mental.", aves: [] },
-    "REGISTROS/Estimativas": { descricao: "Registro das estimativas.", aves: [] }
+    "REGISTROS/Mapa mental": {
+      descricao: "Os mapas mentais organizam ideias, conhecimentos e descobertas sobre os pássaros, mostrando relações construídas pelas crianças ao longo da investigação.",
+      aves: []
+    },
+    "REGISTROS/Estimativas": {
+      descricao: "Estes registros mostram as estimativas feitas pelas crianças durante a investigação, com comparações e hipóteses que aproximam a observação dos pássaros do pensamento matemático.",
+      aves: []
+    },
+    "REGISTROS/Elementos da natureza": {
+      descricao: "Esta galeria reúne momentos de exploração de elementos da natureza. Ao observar cores, formas e texturas, as crianças ampliaram o olhar para o ambiente e encontraram novas referências para suas investigações.",
+      aves: []
+    },
+    "REGISTROS/Tomando formas": {
+      descricao: "As imagens mostram as crianças explorando formas e construções com diferentes materiais. Ao experimentar combinações e transformações, elas expressaram ideias e desenvolveram a criatividade e a percepção espacial.",
+      aves: []
+    }
+  };
+
+  const DESCRICOES_SUBTOPICOS = {
+    "materiais de observacao": "As imagens apresentam materiais de apoio à pesquisa e à observação das aves, como livros ilustrados, binóculos e lupas. Esses recursos ajudaram a turma a observar detalhes, comparar informações e levantar novas perguntas.",
+    "primeiras exploracoes: ao redor da escola": "Neste primeiro percurso pelo entorno da escola, as crianças observaram os pássaros e o ambiente próximo, procurando sinais de sua presença. As imagens mostram como um espaço familiar se tornou lugar de curiosidade, investigação e novas descobertas.",
+    "primeiras exploracoes: fora da escola": "Os registros mostram as crianças explorando espaços fora da escola e observando a natureza durante o percurso. O contato com outros ambientes ampliou as possibilidades de investigação e trouxe novas descobertas para a turma.",
+    "caminhada e descobertas": "Fotos e vídeos documentam caminhadas e saídas investigativas da turma. Ao observar o entorno e procurar pássaros e outros sinais de sua presença, as crianças compartilharam ideias e fizeram novas perguntas.",
+    "outras formas de representar": "Nesta galeria, as crianças apresentam suas descobertas por diferentes linguagens, como desenhos, pinturas, modelagens e escritas. Cada produção revela ideias, observações e maneiras próprias de expressar o que aprenderam.",
+    "visita a emeb dona bebe camargo": "Os registros mostram a visita à EMEB Professora Dona Bebé Camargo, que possibilitou conhecer novos espaços, interagir com outras crianças e compartilhar experiências. A vivência ampliou a investigação e mostrou como também aprendemos nos encontros e nas trocas."
   };
 
   const TEXTOS_SECOES = {
@@ -1867,6 +1890,10 @@
         const isAgradecimentos = chaveTopico(caminho[caminho.length - 1]) === "agradecimentos";
         if (!isAgradecimentos) {
           const chaveProjeto = caminho.join("/");
+          const ehParaAlemDoPapel = chaveTopico(caminho[0]) === "para alem do papel";
+          const descricaoSubtopico = ehParaAlemDoPapel
+            ? DESCRICOES_SUBTOPICOS[chaveTopico(nomeCrianca)]
+            : null;
           const entradaProjeto = Object.entries(PROJETOS).find(([chave]) =>
             mesmaChave(chave, chaveProjeto)
           );
@@ -1874,11 +1901,14 @@
           const projeto = document.createElement("section");
           projeto.className = "project";
           const tituloProjeto = document.createElement("h2");
-          tituloProjeto.textContent = isRegistro ? "Registro" : "Projeto";
+          tituloProjeto.textContent = isRegistro
+            ? "Registro"
+            : ehParaAlemDoPapel ? "Sobre esta experiência" : "Projeto";
           const textoProjeto = document.createElement("p");
           textoProjeto.textContent = dadosProjeto
             ? dadosProjeto.descricao
-            : "Adicione a descrição deste projeto no objeto PROJETOS, no index.html.";
+            : descricaoSubtopico ||
+              "Esta galeria reúne registros em imagens e vídeos desta etapa do projeto e das aprendizagens construídas pelas crianças.";
           projeto.append(tituloProjeto, textoProjeto);
           if (dadosProjeto) {
             dadosProjeto.aves.forEach((chaveAve) => {
