@@ -312,12 +312,7 @@
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    transition: transform 0.8s ease;
-  }
-
-  .photo:hover img {
-    transform: scale(1.04);
+    object-fit: contain;
   }
 
   .photo:disabled {
@@ -410,12 +405,7 @@
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    transition: transform 0.25s ease;
-  }
-
-  .child-photo:hover img {
-    transform: scale(1.03);
+    object-fit: contain;
   }
 
   .photo-zoom-dialog {
@@ -972,7 +962,9 @@
     "TURMA/Matheus": "Matheus fez uma pesquisa sobre a Águia",
     "TURMA/Rafael": "Rafael fez uma pesquisa sobre o Canarinho",
     "TURMA/Sophia": "Sophia fez uma pesquisa sobre a Coruja",
-    "TURMA/Vitor": "Vitor fez uma pesquisa sobre o João-de-barro"
+    "TURMA/Vitor": "Vitor fez uma pesquisa sobre o João-de-barro",
+    "REGISTROS/Mapa mental": "Registro do mapa mental.",
+    "REGISTROS/Estimativas": "Registro das estimativas."
   };
 
   const $ = (id) => document.getElementById(id);
@@ -1098,6 +1090,57 @@
     return a.trim().toLocaleLowerCase("pt-BR") === b.trim().toLocaleLowerCase("pt-BR");
   }
 
+  function chaveTopico(nome) {
+    return nome
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim()
+      .toLocaleLowerCase("pt-BR");
+  }
+
+  function tituloTopico(nome) {
+    const chave = chaveTopico(nome);
+    if (chave === "turma") return "Turma";
+    if (chave === "registro" || chave === "registros") return "Registro";
+    if (chave === "para alem do papel") return "Para alem do papel";
+    if (chave === "agradecimentos") return "Agradecimentos";
+    return legenda(nome);
+  }
+
+  function ordemTopico(nome) {
+    const chave = chaveTopico(nome);
+    if (chave === "turma") return 0;
+    if (chave === "registro" || chave === "registros") return 1;
+    if (chave === "para alem do papel") return 2;
+    if (chave === "agradecimentos") return 3;
+    return 4;
+  }
+
+  function ordenarCaminhadaPorUltimo(pastas) {
+    const caminhada = pastas.filter((pasta) =>
+      mesmaChave(pasta.name, "Caminhada e descobertas")
+    );
+    return [
+      ...pastas.filter((pasta) => !mesmaChave(pasta.name, "Caminhada e descobertas")),
+      ...caminhada
+    ];
+  }
+
+  function ordenarPastasParaAlemDoPapel(pastas) {
+    const ordem = [
+      "caminhada e descobertas",
+      "outras formas de representar",
+      "visita a emeb dona bebe camargo"
+    ];
+    const prioritarias = ordem.flatMap((nome) =>
+      pastas.filter((pasta) => chaveTopico(pasta.name) === nome)
+    );
+    const restantes = pastas.filter((pasta) =>
+      !ordem.includes(chaveTopico(pasta.name))
+    );
+    return [...restantes, ...prioritarias];
+  }
+
   function caminhoDoArquivo(caminho, nome) {
     return caminho ? `${caminho}/${nome}` : nome;
   }
@@ -1107,7 +1150,7 @@
     return abrirPasta(caminho);
   }
 
-  function criarCartao(nome, foto, descricao, aoClicar, indice) {
+  function criarCartao(nome, foto, descricao, aoClicar, indice, alternativaFoto = "Foto não encontrada") {
     const faixa = document.createElement("div");
     faixa.className = "band";
     faixa.innerHTML = `
@@ -1133,6 +1176,8 @@
       imagem.alt = nome;
       imagem.loading = "lazy";
       botaoFoto.replaceChildren(imagem);
+    } else {
+      botaoFoto.querySelector(".photo-empty").textContent = alternativaFoto;
     }
 
     botaoFoto.setAttribute("aria-label", aoClicar ? `Abrir ${nome}` : nome);
@@ -1179,26 +1224,62 @@
       if (caminho.length === 0) {
         const imagens = arquivos.filter(ehImagem);
         const pastas = arquivos.filter(ehPasta);
-        if (!imagens.length) {
-          area.insertAdjacentHTML("beforeend", '<div class="state">Em breve as fotos aparecerão aqui! 🌱</div>');
+        if (!imagens.length && !pastas.length) {
+          area.insertAdjacentHTML("beforeend", '<div class="state">Em breve os tópicos e as fotos aparecerão aqui! 🌱</div>');
           return;
         }
 
+        const topicos = [];
         imagens.forEach((arquivo, indice) => {
-          const nome = legenda(arquivo.name);
           const nomePasta = arquivo.name.replace(/\.[^.]+$/, "");
           const pasta = pastas.find((item) => mesmaChave(item.name, nomePasta));
           const url = sb.storage.from(BUCKET).getPublicUrl(arquivo.name).data.publicUrl;
+          topicos.push({
+            nome: tituloTopico(nomePasta),
+            caminho: pasta ? pasta.name : nomePasta,
+            foto: { url },
+            descricao: chaveTopico(nomePasta) === "turma"
+              ? "Toque na foto para ver as crianças"
+              : "Toque para abrir este tópico",
+            indice,
+            alternativaFoto: "📂"
+          });
+        });
+
+        const pastasSemCapa = ordenarCaminhadaPorUltimo(pastas.filter((pasta) =>
+          !imagens.some((imagem) =>
+            mesmaChave(imagem.name.replace(/\.[^.]+$/, ""), pasta.name)
+          )
+        ));
+        pastasSemCapa.forEach((pasta, indice) => {
+          topicos.push({
+            nome: tituloTopico(pasta.name),
+            caminho: pasta.name,
+            foto: null,
+            descricao: "Toque para abrir este tópico",
+            indice: imagens.length + indice,
+            alternativaFoto: "📂"
+          });
+        });
+
+        topicos.sort((a, b) =>
+          ordemTopico(a.nome) - ordemTopico(b.nome) || a.indice - b.indice
+        );
+        topicos.forEach((topico, indice) => {
           area.appendChild(criarCartao(
-            nome,
-            { url },
-            "Toque na foto para ver as crianças",
-            () => navegarParaPasta([pasta ? pasta.name : nomePasta]),
-            indice
+            topico.nome,
+            topico.foto,
+            topico.descricao,
+            () => navegarParaPasta([topico.caminho]),
+            indice,
+            topico.alternativaFoto
           ));
         });
-      } else if (caminho.length === 1) {
-        const pastas = arquivos.filter(ehPasta);
+      } else if (caminho.length === 1 && chaveTopico(caminho[0]) !== "agradecimentos") {
+        const pastasOriginais = arquivos.filter(ehPasta);
+        const pastas = chaveTopico(caminho[0]) === "para alem do papel"
+          ? ordenarPastasParaAlemDoPapel(pastasOriginais)
+          : ordenarCaminhadaPorUltimo(pastasOriginais);
         const criancas = await Promise.all(pastas.map(async (pasta) => {
           const caminhoCrianca = caminhoDoArquivo(caminho.join("/"), pasta.name);
           const conteudo = await listarPasta(caminhoCrianca);
@@ -1214,7 +1295,7 @@
 
         if (token !== tokenRenderizacao) return;
         if (!criancas.length) {
-          area.insertAdjacentHTML("beforeend", '<div class="state">Ainda não há pastas de crianças nesta turma.</div>');
+          area.insertAdjacentHTML("beforeend", '<div class="state">Ainda não há tópicos nesta seção.</div>');
           return;
         }
 
@@ -1222,80 +1303,88 @@
           area.appendChild(criarCartao(
             crianca.nome,
             crianca.foto,
-            "Toque para ver o projeto e as fotos",
+            mesmaChave(caminho[0], "REGISTROS")
+              ? "Toque para ver as imagens deste registro"
+              : "Toque para ver o projeto e as fotos",
             () => navegarParaPasta([...caminho, crianca.caminho.split("/").pop()]),
             indice
           ));
         });
       } else {
         const nomeCrianca = legenda(caminho[caminho.length - 1]);
-        const chaveProjeto = caminho.join("/");
-        const descricaoProjeto = Object.entries(PROJETOS).find(([chave]) =>
-          mesmaChave(chave, chaveProjeto)
-        );
-        const projeto = document.createElement("section");
-        projeto.className = "project";
-        const tituloProjeto = document.createElement("h2");
-        tituloProjeto.textContent = "Projeto";
-        const textoProjeto = document.createElement("p");
-        textoProjeto.textContent = descricaoProjeto
-          ? descricaoProjeto[1]
-          : "Adicione a descrição deste projeto no objeto PROJETOS, no index.html.";
-        projeto.append(tituloProjeto, textoProjeto);
-        area.appendChild(projeto);
+        const isRegistro = mesmaChave(caminho[0], "REGISTROS");
+        const isAgradecimentos = chaveTopico(caminho[caminho.length - 1]) === "agradecimentos";
+        if (!isAgradecimentos) {
+          const chaveProjeto = caminho.join("/");
+          const descricaoProjeto = Object.entries(PROJETOS).find(([chave]) =>
+            mesmaChave(chave, chaveProjeto)
+          );
+          const projeto = document.createElement("section");
+          projeto.className = "project";
+          const tituloProjeto = document.createElement("h2");
+          tituloProjeto.textContent = isRegistro ? "Registro" : "Projeto";
+          const textoProjeto = document.createElement("p");
+          textoProjeto.textContent = descricaoProjeto
+            ? descricaoProjeto[1]
+            : "Adicione a descrição deste projeto no objeto PROJETOS, no index.html.";
+          projeto.append(tituloProjeto, textoProjeto);
+          area.appendChild(projeto);
+        }
 
-        const imagens = arquivos.filter(ehImagem);
-        const videos = arquivos.filter(ehVideo);
+        const midiasOrdenadas = arquivos.filter((arquivo) => ehImagem(arquivo) || ehVideo(arquivo));
         const midias = document.createElement("div");
         midias.className = "child-gallery";
-        imagens.forEach((arquivo) => {
-          const caminhoFoto = caminhoDoArquivo(caminho.join("/"), arquivo.name);
-          const url = sb.storage.from(BUCKET).getPublicUrl(caminhoFoto).data.publicUrl;
-          const figura = document.createElement("button");
-          figura.className = "child-photo reveal";
-          figura.type = "button";
-          figura.setAttribute("aria-label", `Ampliar foto de ${nomeCrianca}`);
-          const imagem = document.createElement("img");
-          imagem.src = url;
-          imagem.alt = `Foto de ${nomeCrianca}`;
-          imagem.loading = "lazy";
-          figura.addEventListener("click", () => ampliarFoto(url, imagem.alt));
-          imagem.addEventListener("error", () => {
-            const aviso = document.createElement("span");
-            aviso.className = "photo-empty";
-            aviso.textContent = "Não foi possível carregar esta foto. Confira o arquivo e a pasta no Supabase.";
-            figura.replaceChildren(aviso);
-          }, { once: true });
-          figura.appendChild(imagem);
-          midias.appendChild(figura);
+        midiasOrdenadas.forEach((arquivo) => {
+          if (ehImagem(arquivo)) {
+            const caminhoFoto = caminhoDoArquivo(caminho.join("/"), arquivo.name);
+            const url = sb.storage.from(BUCKET).getPublicUrl(caminhoFoto).data.publicUrl;
+            const figura = document.createElement("button");
+            figura.className = "child-photo reveal";
+            figura.type = "button";
+            figura.setAttribute("aria-label", `Ampliar foto de ${nomeCrianca}`);
+            const imagem = document.createElement("img");
+            imagem.src = url;
+            imagem.alt = `Foto de ${nomeCrianca}`;
+            imagem.loading = "lazy";
+            figura.addEventListener("click", () => ampliarFoto(url, imagem.alt));
+            imagem.addEventListener("error", () => {
+              const aviso = document.createElement("span");
+              aviso.className = "photo-empty";
+              aviso.textContent = "Não foi possível carregar esta foto. Confira o arquivo e a pasta no Supabase.";
+              figura.replaceChildren(aviso);
+            }, { once: true });
+            figura.appendChild(imagem);
+            midias.appendChild(figura);
+          } else {
+            const caminhoVideo = caminhoDoArquivo(caminho.join("/"), arquivo.name);
+            const url = sb.storage.from(BUCKET).getPublicUrl(caminhoVideo).data.publicUrl;
+            const figura = document.createElement("figure");
+            figura.className = "child-video reveal";
+            const video = document.createElement("video");
+            video.src = url;
+            video.controls = true;
+            video.preload = "metadata";
+            video.playsInline = true;
+            video.setAttribute("aria-label", `Vídeo de ${nomeCrianca}`);
+            video.addEventListener("play", () => {
+              document.dispatchEvent(new Event("album:video-iniciado"));
+            });
+            video.addEventListener("error", () => {
+              const aviso = document.createElement("figcaption");
+              aviso.className = "photo-empty";
+              aviso.textContent = "Não foi possível carregar este vídeo. Confira se o arquivo é MP4 ou WebM e está na pasta da criança.";
+              figura.replaceChildren(aviso);
+            }, { once: true });
+            figura.appendChild(video);
+            midias.appendChild(figura);
+          }
         });
 
-        videos.forEach((arquivo) => {
-          const caminhoVideo = caminhoDoArquivo(caminho.join("/"), arquivo.name);
-          const url = sb.storage.from(BUCKET).getPublicUrl(caminhoVideo).data.publicUrl;
-          const figura = document.createElement("figure");
-          figura.className = "child-video reveal";
-          const video = document.createElement("video");
-          video.src = url;
-          video.controls = true;
-          video.preload = "metadata";
-          video.playsInline = true;
-          video.setAttribute("aria-label", `Vídeo de ${nomeCrianca}`);
-          video.addEventListener("play", () => {
-            document.dispatchEvent(new Event("album:video-iniciado"));
-          });
-          video.addEventListener("error", () => {
-            const aviso = document.createElement("figcaption");
-            aviso.className = "photo-empty";
-            aviso.textContent = "Não foi possível carregar este vídeo. Confira se o arquivo é MP4 ou WebM e está na pasta da criança.";
-            figura.replaceChildren(aviso);
-          }, { once: true });
-          figura.appendChild(video);
-          midias.appendChild(figura);
-        });
-
-        if (!imagens.length && !videos.length) {
-          area.insertAdjacentHTML("beforeend", '<div class="state">Ainda não há fotos ou vídeos para esta criança.</div>');
+        if (!midiasOrdenadas.length) {
+          area.insertAdjacentHTML(
+            "beforeend",
+            `<div class="state">${isAgradecimentos ? "Ainda não há imagens ou vídeos em Agradecimentos." : isRegistro ? "Ainda não há imagens para este registro." : "Ainda não há fotos ou vídeos para esta criança."}</div>`
+          );
         } else {
           area.appendChild(midias);
         }
