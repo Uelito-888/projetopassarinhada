@@ -357,6 +357,106 @@
     cursor: pointer;
   }
 
+  .story-intro {
+    width: min(1000px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: clamp(36px, 6vw, 64px) 0;
+  }
+
+  #historiaInicio[hidden] {
+    display: none;
+  }
+
+  .story-school {
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .story-school h2 {
+    color: var(--ink);
+    font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+  }
+
+  .story-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 24px;
+    margin-top: 12px;
+    color: var(--ink);
+    font-size: clamp(1rem, 1.7vw, 1.15rem);
+  }
+
+  .story-history {
+    padding: clamp(22px, 4vw, 38px);
+    border-left: 5px solid var(--leaf);
+    border-radius: var(--radius);
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(43, 58, 46, 0.1);
+  }
+
+  .story-history h3 {
+    margin-bottom: 12px;
+    color: var(--ink);
+    font-size: clamp(1.45rem, 2.8vw, 1.9rem);
+  }
+
+  .story-history p {
+    color: var(--ink);
+    font-size: clamp(1.05rem, 1.8vw, 1.2rem);
+    line-height: 1.75;
+  }
+
+  .story-history p + p {
+    margin-top: 12px;
+  }
+
+  .section-copy {
+    width: min(1200px, calc(100% - 32px));
+    margin: 24px auto 0;
+    padding: clamp(22px, 4vw, 38px);
+    border-left: 5px solid var(--leaf);
+    border-radius: var(--radius);
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(43, 58, 46, 0.1);
+  }
+
+  .section-copy h3 {
+    margin-bottom: 14px;
+    color: var(--ink);
+    font-size: clamp(1.4rem, 2.8vw, 1.9rem);
+  }
+
+  .section-copy p {
+    color: var(--ink);
+    font-size: clamp(1.05rem, 1.8vw, 1.2rem);
+    line-height: 1.75;
+  }
+
+  .section-copy p + p {
+    margin-top: 14px;
+  }
+
+  .document-link {
+    display: inline-flex;
+    margin-top: 20px;
+    padding: 11px 18px;
+    border-radius: 99px;
+    background: var(--leaf);
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .document-link:hover {
+    filter: brightness(1.08);
+  }
+
+  .document-link:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+
   .project {
     width: min(1200px, calc(100% - 32px));
     margin: 28px auto 0;
@@ -374,6 +474,60 @@
   .project p {
     color: var(--muted);
     white-space: pre-line;
+  }
+
+  .bird-info {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid #e3dcc8;
+  }
+
+  .bird-info h3 {
+    margin-bottom: 6px;
+    color: var(--ink);
+    font-size: 1.15rem;
+  }
+
+  .bird-info p {
+    color: var(--ink);
+  }
+
+  .bird-sound-button {
+    margin-top: 12px;
+    padding: 9px 16px;
+    border: 0;
+    border-radius: 99px;
+    background: var(--leaf);
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .bird-sound-button:hover:not(:disabled) {
+    filter: brightness(1.08);
+  }
+
+  .bird-sound-button:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .bird-sound-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
+
+  .bird-sound-status,
+  .bird-sound-credit {
+    display: block;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .bird-sound-credit a {
+    color: var(--leaf);
   }
 
   .child-gallery {
@@ -609,6 +763,22 @@
       <p>Um álbum feito com muito carinho pelas crianças da nossa sala.</p>
       <div class="scroll-hint">role para baixo ↓</div>
     </header>
+
+    <section id="historiaInicio" class="story-intro" aria-labelledby="story-title">
+      <header class="story-school">
+        <h2 id="story-title">EMEB Profª Dalva Yasbeck Bosco</h2>
+        <div class="story-details">
+          <p><strong>Diretora:</strong> Maria Teresa</p>
+          <p><strong>Coordenadora:</strong> Cássia Maria</p>
+          <p><strong>Jardim 2:</strong> Ana Flávia e Vitória</p>
+        </div>
+      </header>
+      <article class="story-history">
+        <h3>Como tudo começou</h3>
+        <p>Após o recesso escolar de julho de 2026, tudo começou em uma roda de conversa do Jardim 2. O objetivo era compartilhar o que as crianças tinham vivido durante o período fora da escola. Surgiram relatos de momentos de descanso em casa, passeios a parques e viagens marcantes.</p>
+        <p>Entre as experiências, houve visitas a zoológicos. A profissional de apoio Vitória contou que tinha visitado um viveiro de aves resgatadas em Aparecida do Norte. Os registros de várias aves chamaram a atenção das professoras e das crianças. Os alunos também levaram fotos de animais que haviam visto em zoológicos. Assim, despertou a curiosidade de conhecer melhor esses pássaros tão encantadores.</p>
+      </article>
+    </section>
 
     <section id="album" aria-live="polite"></section>
 
@@ -892,6 +1062,12 @@
       atualizarBotao();
     });
 
+    document.addEventListener("album:canto-passaro-iniciado", () => {
+      Musica.desligar();
+      salvarPreferencia("off");
+      atualizarBotao();
+    });
+
     botao.addEventListener("click", async () => {
       if (Musica.ligada) {
         Musica.desligar();
@@ -913,7 +1089,8 @@
       if (
         evento.target &&
         evento.target.closest &&
-        evento.target.closest("#btnMusica")
+        (evento.target.closest("#btnMusica") ||
+          evento.target.closest(".bird-sound-button"))
       ) {
         return;
       }
@@ -943,33 +1120,237 @@
   let tokenRenderizacao = 0;
 
 
+  const AVES = {
+    pelicano: {
+      nome: "Pelicano",
+      descricao: "O pelicano-branco é uma grande ave aquática. A bolsa elástica sob o bico ajuda a capturar e transportar peixes.",
+      audio: {
+        url: "https://upload.wikimedia.org/wikipedia/commons/d/dc/Great_White_Pelican_%28Pelecanus_onocrotalus%29_sounds.ogg",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Great_White_Pelican_(Pelecanus_onocrotalus)_sounds.ogg",
+        credit: "Marco Dragonetti — CC BY 4.0; pelicano-branco"
+      }
+    },
+    cegonha: {
+      nome: "Cegonha",
+      descricao: "A cegonha-branca tem pernas longas e realiza migrações entre as áreas onde se reproduz e passa o inverno. Pode se alimentar de pequenos animais.",
+      audioMensagem: "Não incluímos um áudio porque a atribuição da gravação localizada precisa ser confirmada."
+    },
+    pica_pau: {
+      nome: "Pica-pau",
+      descricao: "Muitos pica-paus bicam os troncos para procurar insetos e larvas. O áudio é de um pica-pau-preto europeu.",
+      audio: {
+        url: "https://upload.wikimedia.org/wikipedia/commons/0/0a/BlackWoodpeckerDryocopusMartiusConflictCallKijak.ogg",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:BlackWoodpeckerDryocopusMartiusConflictCallKijak.ogg",
+        credit: "Alexander Kürthy (SanoAK) — CC BY-SA 4.0; pica-pau-preto"
+      }
+    },
+    tucano: {
+      nome: "Tucano",
+      descricao: "O tucano-toco alimenta-se principalmente de frutos. Apesar de grande, seu bico é leve e também ajuda a dissipar calor.",
+      audio: {
+        url: "https://upload.wikimedia.org/wikipedia/commons/a/a8/Toco_Toucan_call_%28Ramphastos_toco%29.ogg",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Toco_Toucan_call_(Ramphastos_toco).ogg",
+        credit: "Fabricio Grigolin — CC BY 4.0; tucano-toco"
+      }
+    },
+    bico_de_sapato: {
+      nome: "Bico-de-sapato",
+      descricao: "O bico-de-sapato vive em áreas alagadas da África. Costuma ficar imóvel à espera de peixes, que captura com seu bico largo.",
+      audioMensagem: "Ainda não encontrei uma gravação aberta confirmada do chamado desta ave."
+    },
+    beija_flor: {
+      nome: "Beija-flor",
+      descricao: "Beija-flores conseguem pairar no ar enquanto se alimentam. O áudio é de um beija-flor-de-garganta-rubi, espécie da América do Norte.",
+      audio: {
+        url: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Archilochus_colubris_-_Ruby-throated_Hummingbird_-_XC109597.ogg",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Archilochus_colubris_-_Ruby-throated_Hummingbird_-_XC109597.ogg",
+        credit: "Jonathon Jongsma — CC BY-SA 3.0; beija-flor-de-garganta-rubi"
+      }
+    },
+    azulao: {
+      nome: "Azulão",
+      descricao: "No azulão, o macho adulto tem plumagem azul, enquanto a fêmea é predominantemente parda.",
+      audioMensagem: "Ainda não encontrei uma gravação aberta confirmada do canto do azulão."
+    },
+    maritaca: {
+      nome: "Maritaca",
+      descricao: "A maritaca é um periquito da família dos papagaios. O áudio é do periquitão-maracanã, também conhecido como periquito-de-olho-branco.",
+      audio: {
+        url: "https://upload.wikimedia.org/wikipedia/commons/8/86/Psittacara_leucophthalmus_-_White-eyed_Parakeet_XC251429.mp3",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Psittacara_leucophthalmus_-_White-eyed_Parakeet_XC251429.mp3",
+        credit: "Niels Krabbe — CC BY-SA 4.0; periquito-de-olho-branco"
+      }
+    },
+    pavao: {
+      nome: "Pavão",
+      descricao: "O pavão-indiano macho abre as longas penas coloridas da cauda em leque durante sua exibição.",
+      audio: {
+        url: "https://upload.wikimedia.org/wikipedia/commons/3/3e/Indian_Peafowl.ogg",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Indian_Peafowl.ogg",
+        credit: "Gypsypkd — domínio público; pavão-indiano"
+      }
+    },
+    tesourinha: {
+      nome: "Tesourinha",
+      descricao: "A tesourinha é reconhecida pela cauda longa e profundamente bifurcada. Ela captura insetos durante o voo.",
+      audio: {
+        url: "https://upload.wikimedia.org/wikipedia/commons/2/26/Tyrannus_savana_-_Fork-tailed_Flycatcher_XC112746.mp3",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Tyrannus_savana_-_Fork-tailed_Flycatcher_XC112746.mp3",
+        credit: "Niels Krabbe — CC BY-SA 3.0"
+      }
+    },
+    bem_te_vi: {
+      nome: "Bem-te-vi",
+      descricao: "O bem-te-vi tem o peito amarelo, e seu canto repetido lembra o próprio nome. Seu nome científico é Pitangus sulphuratus.",
+      audio: {
+        url: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Canto_do_Bem-te-vi.ogg",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Canto_do_Bem-te-vi.ogg",
+        credit: "Paulo RS Menezes — CC BY-SA 4.0"
+      }
+    },
+    aguia: {
+      nome: "Águia",
+      descricao: "Águias são aves de rapina. O áudio é de uma águia-careca, espécie encontrada na América do Norte.",
+      audio: {
+        url: "https://upload.wikimedia.org/wikipedia/commons/5/59/Bald_Eagle_Yellowstone_National_Park.ogg",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Bald_Eagle_Yellowstone_National_Park.ogg",
+        credit: "National Park Service — domínio público; águia-careca"
+      }
+    },
+    canarinho: {
+      nome: "Canarinho",
+      descricao: "O canário-da-terra, também chamado de canarinho, é uma ave sul-americana. A gravação pode conter outras aves ao fundo.",
+      audio: {
+        url: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Sicalis_flaveola.ogg",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Sicalis_flaveola.ogg",
+        credit: "Eurico Zimbres — CC BY-SA 2.5; canário-da-terra"
+      }
+    },
+    coruja: {
+      nome: "Coruja",
+      descricao: "Muitas corujas têm voo silencioso, o que ajuda a se aproximar das presas. O áudio é de uma coruja-das-torres americana.",
+      audio: {
+        url: "https://upload.wikimedia.org/wikipedia/commons/c/ca/American_Barn_Owl_Screech.flac",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:American_Barn_Owl_Screech.flac",
+        credit: "Daniel Polin — CC BY 4.0; coruja-das-torres americana"
+      }
+    },
+    joao_de_barro: {
+      nome: "João-de-barro",
+      descricao: "O joão-de-barro constrói um ninho fechado de barro, com formato semelhante ao de um forno.",
+      audio: {
+        url: "https://upload.wikimedia.org/wikipedia/commons/f/f2/Furnarius_rufus.ogg",
+        sourceUrl: "https://commons.wikimedia.org/wiki/File:Furnarius_rufus.ogg",
+        credit: "Eurico Zimbres — CC BY-SA 3.0"
+      }
+    }
+  };
+
   const PROJETOS = {
-    "TURMA/Bernardo Antonio": "Bernardo Antonio fez uma pesquisa sobre o Pelicano.",
-    "TURMA/Bernardo Fortunato": "Bernardo Fortunato fez uma pesquisa sobre a Cegonha",
-    "TURMA/Enzo": "Enzo fez uma pesquisa sobre o Pica-pau",
-    "TURMA/Esther": "Esther fez uma pesquisa sobre o Tucano",
-    "TURMA/Gael": "Gael fez uma pesquisa sobre o Bico-de-sapato",
-    "TURMA/Heitor": "Heitor fez uma pesquisa sobre o Beija-flor",
-    "TURMA/Helena": "Helena fez uma pesquisa sobre o Beija-flor",
-    "TURMA/Henry": "Henry fez uma pesquisa sobre o Azulão",
-    "TURMA/Joaquim": "Joaquim fez uma pesquisa sobre o Beija-flor",
-    "TURMA/Jose Felipe": "Jose Felipe fez uma pesquisa sobre a Maritaca e também sobre o Pavão",
-    "TURMA/Liz": "Liz fez uma pesquisa sobre a Tesourinha",
-    "TURMA/Manuela": "Manuela fez uma pesquisa sobre o Beija-flor",
-    "TURMA/Maria Clara": "Maria Clara fez uma pesquisa sobre Tucano",
-    "TURMA/Maria Eduarda": "Maria Eduarda fez uma pesquisa sobre o Bem-te-vi",
-    "TURMA/Marianne": "Marianne fez uma pesquisa sobre a Maritaca",
-    "TURMA/Matheus": "Matheus fez uma pesquisa sobre a Águia",
-    "TURMA/Rafael": "Rafael fez uma pesquisa sobre o Canarinho",
-    "TURMA/Sophia": "Sophia fez uma pesquisa sobre a Coruja",
-    "TURMA/Vitor": "Vitor fez uma pesquisa sobre o João-de-barro",
-    "REGISTROS/Mapa mental": "Registro do mapa mental.",
-    "REGISTROS/Estimativas": "Registro das estimativas."
+    "TURMA/Bernardo Antonio": { descricao: "Bernardo Antônio pesquisou o Pelicano.", aves: ["pelicano"] },
+    "TURMA/Bernardo Fortunato": { descricao: "Bernardo Fortunato pesquisou a Cegonha.", aves: ["cegonha"] },
+    "TURMA/Enzo": { descricao: "Enzo pesquisou o Pica-pau.", aves: ["pica_pau"] },
+    "TURMA/Esther": { descricao: "Esther pesquisou o Tucano.", aves: ["tucano"] },
+    "TURMA/Gael": { descricao: "Gael pesquisou o Bico-de-sapato.", aves: ["bico_de_sapato"] },
+    "TURMA/Heitor": { descricao: "Heitor pesquisou o Beija-flor.", aves: ["beija_flor"] },
+    "TURMA/Helena": { descricao: "Helena pesquisou o Beija-flor.", aves: ["beija_flor"] },
+    "TURMA/Henry": { descricao: "Henry pesquisou o Azulão.", aves: ["azulao"] },
+    "TURMA/Joaquim": { descricao: "Joaquim pesquisou o Beija-flor.", aves: ["beija_flor"] },
+    "TURMA/Jose Felipe": { descricao: "José Felipe pesquisou a Maritaca e o Pavão.", aves: ["maritaca", "pavao"] },
+    "TURMA/Liz": { descricao: "Liz pesquisou a Tesourinha.", aves: ["tesourinha"] },
+    "TURMA/Manuela": { descricao: "Manuela pesquisou o Beija-flor.", aves: ["beija_flor"] },
+    "TURMA/Maria Clara": { descricao: "Maria Clara pesquisou o Tucano.", aves: ["tucano"] },
+    "TURMA/Maria Eduarda": { descricao: "Maria Eduarda pesquisou o Bem-te-vi.", aves: ["bem_te_vi"] },
+    "TURMA/Marianne": { descricao: "Marianne pesquisou a Maritaca.", aves: ["maritaca"] },
+    "TURMA/Matheus": { descricao: "Matheus pesquisou a Águia.", aves: ["aguia"] },
+    "TURMA/Rafael": { descricao: "Rafael pesquisou o Canarinho.", aves: ["canarinho"] },
+    "TURMA/Sophia": { descricao: "Sophia pesquisou a Coruja.", aves: ["coruja"] },
+    "TURMA/Vitor": { descricao: "Vitor pesquisou o João-de-barro.", aves: ["joao_de_barro"] },
+    "REGISTROS/Mapa mental": { descricao: "Registro do mapa mental.", aves: [] },
+    "REGISTROS/Estimativas": { descricao: "Registro das estimativas.", aves: [] }
+  };
+
+  const TEXTOS_SECOES = {
+    turma: {
+      titulo: "A pesquisa da turma",
+      paragrafos: [
+        "Uma das principais propostas foi que cada criança escolhesse um pássaro de seu interesse para pesquisar e compartilhar suas descobertas com o grupo. Essa experiência favoreceu o desenvolvimento da memória, da confiança, da criatividade, da construção de conhecimentos, da interação e do respeito.",
+        "Cada criança teve a oportunidade de ser ouvida, apresentar suas ideias e compartilhar suas descobertas, com o incentivo e a participação dos familiares e dos professores ao longo do processo.",
+        "Após cada apresentação, os colegas puderam fazer perguntas, comentários e contribuições, vivenciando momentos de troca e de construção coletiva do conhecimento. Essa dinâmica também favoreceu a escuta, a paciência e o respeito ao tempo e à fala de cada colega."
+      ]
+    },
+    registros: {
+      titulo: "Registros do percurso investigativo",
+      paragrafos: [
+        "Ao longo da investigação sobre os pássaros, os aprendizes também registraram e representaram suas experiências de diferentes maneiras: por meio de mapas mentais, desenhos, modelagens com massinha, pinturas, escritas, estimativas e outras formas de linguagem.",
+        "Em cada produção, foi possível observar aspectos importantes do desenvolvimento e da aprendizagem das crianças. Nos mapas mentais, apareceram a organização das ideias, a memória e as relações estabelecidas entre as descobertas. Nos desenhos e nas pinturas, destacaram-se a observação dos detalhes, a criatividade e a representação dos conhecimentos construídos.",
+        "Nas modelagens com massinha, observaram-se a imaginação, a percepção das formas e a coordenação motora fina. Nas escritas, as hipóteses sobre a linguagem, a ampliação do vocabulário e as tentativas de registrar o que aprenderam.",
+        "Nas estimativas, foi possível explorar noções matemáticas, comparações, quantidades e raciocínio lógico.",
+        "Todas essas experiências também favoreceram a expressão oral, a comunicação e a troca de conhecimentos entre os colegas. Assim, cada criança pôde encontrar diferentes maneiras de demonstrar o que observou, pensou e descobriu durante a investigação.",
+        "A seguir, apresentamos alguns registros produzidos pelos aprendizes, que revelam seus repertórios, suas hipóteses e as aprendizagens construídas ao longo desse percurso."
+      ]
+    },
+    "para alem do papel": {
+      titulo: "Para além dos registros: aprender na prática",
+      paragrafos: [
+        "Além dos registros no papel, as vivências práticas tiveram um papel fundamental em nosso percurso investigativo. Os conhecimentos teóricos ganharam significado por meio das experiências, enquanto as observações das crianças se tornaram cada vez mais cuidadosas, detalhadas e significativas.",
+        "A professora Ana Flávia, em parceria com a turma, organizou diferentes experiências para que os aprendizes pudessem buscar novos conhecimentos. O convite era olhar para além do que já conheciam: observar os pássaros nas árvores, nos postes e no céu; identificar ninhos e vestígios de sua passagem; e escutar seus diferentes cantos.",
+        "Nossa investigação começou com uma volta no quarteirão da escola. Mesmo em um percurso tão próximo e familiar, foi possível encontrar diferentes tipos de pássaros e ninhos, despertando a curiosidade e novas perguntas entre as crianças.",
+        "A partir da comunicação ativa com as famílias, surgiu o convite para conhecer a chácara da prima do aluno Henry. Posteriormente, a turma também visitou o Campo Experimental. Esses espaços ampliaram as possibilidades de observação e permitiram o contato com diferentes ambientes, paisagens e manifestações da presença dos pássaros.",
+        "As experiências favoreceram o desenvolvimento de diversas habilidades, como percepção ambiental, atenção, observação, escuta atenta, orientação e percepção visuoespacial, além da formulação de hipóteses, da comparação entre diferentes contextos e da construção de vínculos afetivos e sociais.",
+        "Outro espaço que fez parte desse percurso foi a EMEB Professora Dona Bebé Camargo. Além de ampliar as possibilidades de observação dos pássaros, a visita proporcionou o encontro com outras crianças, diferentes materiais e novos ambientes. Foi uma oportunidade de explorar, interagir, compartilhar experiências e perceber que a aprendizagem também acontece nas relações e nas trocas com o outro.",
+        "Cada saída trouxe novas descobertas e possibilidades, mostrando às crianças que investigar também é experimentar, observar, questionar e construir conhecimentos a partir do mundo que nos cerca.",
+        "A seguir, compartilhamos alguns registros fotográficos das experiências vivenciadas em cada local."
+      ]
+    },
+    agradecimentos: {
+      titulo: "Agradecimentos",
+      paragrafos: [
+        "Nenhum projeto se constrói sozinho. Por isso, queremos expressar nossa gratidão a todos que fizeram parte desta caminhada e contribuíram, de diferentes maneiras, para que cada experiência se tornasse possível.",
+        "Agradecemos aos pais e responsáveis, que se dedicaram ao lado das crianças, acompanharam nossas vivências, demonstraram interesse por cada descoberta, compartilharam informações, participaram das propostas e estiveram presentes ao longo de todo o percurso. O envolvimento de vocês foi essencial!",
+        "À equipe escolar, nosso agradecimento pelo apoio, pelas ideias, orientações, contribuições e pela participação em tantos momentos. A parceria de cada pessoa fortaleceu o trabalho desenvolvido por Ana Flávia Guiaro e Vitória Miranda Rodrigues e enriqueceu ainda mais nossas experiências.",
+        "Às famílias que abriram suas portas, nos acolheram e compartilharam conosco um pouco de suas histórias, conhecimentos e vivências, nossa sincera gratidão. Cada encontro ampliou nossos olhares e trouxe novas possibilidades de aprendizagem.",
+        "Agradecemos especialmente a Welington Gonçalves de Melo, que se dedicou à organização das informações e à construção deste site, transformando registros, memórias e experiências em um espaço no qual todo esse percurso poderá ser revisitado e preservado. Graças a esse trabalho, nossas vivências ultrapassam o tempo e continuarão contando esta história.",
+        "De maneira muito especial, agradecemos às nossas crianças por cada participação, dedicação, curiosidade, pergunta, descoberta e envolvimento. Vocês foram as grandes protagonistas deste projeto e nos ensinaram tanto quanto aprenderam. Cada experiência ganhou sentido por meio dos seus olhares, das suas ideias e da vontade de descobrir o mundo.",
+        "A todos que caminharam conosco, deixamos nosso agradecimento. Afinal, as maiores aprendizagens acontecem quando construímos juntos, e as boas memórias merecem ser eternizadas."
+      ]
+    },
+    "embasamento teorico pedagogico": {
+      titulo: "Fundamentos teóricos e pedagógicos",
+      paragrafos: [
+        "Por trás de cada experiência, descoberta e proposta desenvolvida, existem intencionalidades pedagógicas que orientam nossa prática.",
+        "Para conhecer melhor os fundamentos deste percurso, disponibilizamos um documento de referência com os embasamentos teóricos, pedagógicos e legais que nortearam as atividades, contemplando as concepções de aprendizagem, desenvolvimento infantil e os documentos que fundamentam a Educação Infantil.",
+        "Em caso de dúvidas ou para aprofundar a compreensão sobre alguma proposta, consulte o material. Nele, você encontrará não apenas o que foi realizado, mas também os motivos, as intencionalidades e os fundamentos que deram sentido a cada experiência."
+      ],
+      documento: {
+        href: "Documento_Passarinhada_Fundamentacao_Pedagogica.docx",
+        rotulo: "Abrir documento de referência"
+      }
+    }
   };
 
   const $ = (id) => document.getElementById(id);
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   const photoZoom = $("photoZoom");
+  let cantoPassaroAtivo = null;
+  let botaoCantoAtivo = null;
+  let statusCantoAtivo = null;
+
+  function pararCantoPassaro(mensagem = "") {
+    if (cantoPassaroAtivo) cantoPassaroAtivo.pause();
+    if (botaoCantoAtivo) {
+      botaoCantoAtivo.setAttribute("aria-pressed", "false");
+      botaoCantoAtivo.textContent = botaoCantoAtivo.dataset.playLabel;
+    }
+    if (statusCantoAtivo) statusCantoAtivo.textContent = mensagem;
+    cantoPassaroAtivo = null;
+    botaoCantoAtivo = null;
+    statusCantoAtivo = null;
+  }
+
+  document.addEventListener("album:video-iniciado", () => {
+    pararCantoPassaro("Som pausado enquanto o vídeo é reproduzido.");
+  });
 
   history.replaceState({ albumPath: [] }, "", location.href);
 
@@ -1056,7 +1437,31 @@
 
     if (!texto) texto = "Passarinho";
 
-    return texto.charAt(0).toUpperCase() + texto.slice(1);
+    texto = texto.charAt(0).toUpperCase() + texto.slice(1);
+    const textoAcentuado = texto
+      .replace(/\bvisita a emeb dona bebe camargo\b/i, "Visita à EMEB Dona Bebé Camargo")
+      .replace(/\b(alem|observacao|exploracoes|jose|antonio|bebe)\b/gi, (palavra) => {
+        const acentos = {
+          alem: "além",
+          observacao: "observação",
+          exploracoes: "explorações",
+          jose: "José",
+          antonio: "Antônio",
+          bebe: "bebé",
+          teorico: "teórico",
+          pedagogico: "pedagógico"
+        };
+        const acentuada = acentos[palavra.toLocaleLowerCase("pt-BR")];
+        return palavra === palavra.toLocaleUpperCase("pt-BR")
+          ? acentuada.toLocaleUpperCase("pt-BR")
+          : palavra[0] === palavra[0].toLocaleUpperCase("pt-BR")
+            ? acentuada.charAt(0).toLocaleUpperCase("pt-BR") + acentuada.slice(1)
+            : acentuada;
+      });
+    return textoAcentuado.replace(
+      /^Primeiras explorações(?:\s*:\s*|\s+)(.+)$/i,
+      "Primeiras explorações: $1"
+    );
   }
 
   async function listarPasta(caminho) {
@@ -1102,8 +1507,9 @@
     const chave = chaveTopico(nome);
     if (chave === "turma") return "Turma";
     if (chave === "registro" || chave === "registros") return "Registro";
-    if (chave === "para alem do papel") return "Para alem do papel";
+    if (chave === "para alem do papel") return "Para além do papel";
     if (chave === "agradecimentos") return "Agradecimentos";
+    if (chave === "embasamento teorico pedagogico") return "Embasamento Teórico Pedagógico";
     return legenda(nome);
   }
 
@@ -1113,7 +1519,8 @@
     if (chave === "registro" || chave === "registros") return 1;
     if (chave === "para alem do papel") return 2;
     if (chave === "agradecimentos") return 3;
-    return 4;
+    if (chave === "embasamento teorico pedagogico") return 4;
+    return 5;
   }
 
   function ordenarCaminhadaPorUltimo(pastas) {
@@ -1204,30 +1611,161 @@
 
     const titulo = document.createElement("h2");
     titulo.textContent = caminho.length
-      ? legenda(caminho[caminho.length - 1])
+      ? tituloTopico(caminho[caminho.length - 1])
       : "Álbum da turma";
     navegacao.appendChild(titulo);
     area.appendChild(navegacao);
   }
 
+  function mostrarTextoSecao(area, caminho) {
+    if (caminho.length !== 1) return;
+
+    const chave = chaveTopico(caminho[0]);
+    const texto = TEXTOS_SECOES[chave === "registro" ? "registros" : chave];
+    if (!texto) return;
+
+    const secao = document.createElement("section");
+    secao.className = "section-copy";
+    const titulo = document.createElement("h3");
+    titulo.textContent = texto.titulo;
+    secao.appendChild(titulo);
+
+    texto.paragrafos.forEach((paragrafo) => {
+      const elemento = document.createElement("p");
+      elemento.textContent = paragrafo;
+      secao.appendChild(elemento);
+    });
+
+    if (texto.documento) {
+      const linkDocumento = document.createElement("a");
+      linkDocumento.className = "document-link";
+      linkDocumento.href = texto.documento.href;
+      linkDocumento.target = "_blank";
+      linkDocumento.rel = "noopener";
+      linkDocumento.textContent = texto.documento.rotulo;
+      secao.appendChild(linkDocumento);
+    }
+
+    area.appendChild(secao);
+  }
+
+  function criarControleCanto(ave) {
+    const controles = document.createElement("div");
+    const botao = document.createElement("button");
+    const status = document.createElement("span");
+    botao.className = "bird-sound-button";
+    botao.type = "button";
+    botao.dataset.playLabel = `Ouvir som do ${ave.nome}`;
+    botao.textContent = botao.dataset.playLabel;
+    botao.setAttribute("aria-pressed", "false");
+    status.className = "bird-sound-status";
+    status.setAttribute("aria-live", "polite");
+
+    if (ave.audio && ave.audio.url) {
+      botao.addEventListener("click", async () => {
+        const videoEmReproducao = Array.from(
+          document.querySelectorAll(".child-video video")
+        ).some((video) => !video.paused && !video.ended);
+        if (videoEmReproducao) {
+          status.textContent = "Pause o vídeo antes de ouvir o som.";
+          return;
+        }
+
+        if (cantoPassaroAtivo && botaoCantoAtivo === botao) {
+          pararCantoPassaro();
+          return;
+        }
+
+        pararCantoPassaro();
+        const audio = new Audio(ave.audio.url);
+        audio.loop = true;
+        audio.preload = "none";
+        cantoPassaroAtivo = audio;
+        botaoCantoAtivo = botao;
+        statusCantoAtivo = status;
+        document.dispatchEvent(new Event("album:canto-passaro-iniciado"));
+
+        try {
+          await audio.play();
+          if (cantoPassaroAtivo !== audio) return;
+          botao.setAttribute("aria-pressed", "true");
+          botao.textContent = `Parar som do ${ave.nome}`;
+        } catch (erro) {
+          console.error(`Não foi possível reproduzir o canto de ${ave.nome}:`, erro);
+          if (cantoPassaroAtivo !== audio) return;
+          pararCantoPassaro();
+          status.textContent = erro.name === "NotAllowedError"
+            ? "O navegador bloqueou o áudio. Tente clicar novamente."
+            : "Não foi possível carregar este áudio. Confira a fonte do arquivo.";
+        }
+      });
+    } else {
+      botao.disabled = true;
+      botao.textContent = "Som indisponível";
+      status.textContent = ave.audioMensagem || "Gravação do som ainda não disponível.";
+    }
+
+    controles.appendChild(botao);
+    controles.appendChild(status);
+
+    if (ave.audio && ave.audio.sourceUrl) {
+      const credito = document.createElement("small");
+      credito.className = "bird-sound-credit";
+      const fonte = document.createElement("a");
+      fonte.href = ave.audio.sourceUrl;
+      fonte.target = "_blank";
+      fonte.rel = "noopener";
+      const tituloArquivo = decodeURIComponent(
+        new URL(ave.audio.sourceUrl).pathname.split("/File:").pop()
+      ).replace(/_/g, " ");
+      const autor = ave.audio.credit.split(" — ")[0];
+      fonte.textContent = `${autor} — ${tituloArquivo}`;
+      credito.append("Fonte/autor: ", fonte, " · Licença: ");
+
+      const licenca = ave.audio.credit.match(/CC (BY(?:-SA)?) (\d\.\d)/);
+      if (licenca) {
+        const linkLicenca = document.createElement("a");
+        linkLicenca.href = `https://creativecommons.org/licenses/${licenca[1].toLowerCase()}/${licenca[2]}/`;
+        linkLicenca.target = "_blank";
+        linkLicenca.rel = "noopener";
+        linkLicenca.textContent = `CC ${licenca[1]} ${licenca[2]}`;
+        credito.appendChild(linkLicenca);
+      } else {
+        credito.append("domínio público (conforme informado na fonte)");
+      }
+
+      credito.append("; áudio reproduzido sem alterações.");
+      controles.appendChild(credito);
+    }
+
+    return controles;
+  }
+
   async function abrirPasta(caminho) {
     const token = ++tokenRenderizacao;
     const area = $("album");
+    pararCantoPassaro();
+    $("historiaInicio").hidden = caminho.length > 0;
     area.innerHTML = '<div class="state">Carregando as fotos… 🐦</div>';
 
     try {
+      if (caminho.length === 1 && chaveTopico(caminho[0]) === "embasamento teorico pedagogico") {
+        if (token !== tokenRenderizacao) return;
+        area.innerHTML = "";
+        mostrarNavegacao(area, caminho);
+        mostrarTextoSecao(area, caminho);
+        return;
+      }
+
       const arquivos = await listarPasta(caminho.join("/"));
       if (token !== tokenRenderizacao) return;
       area.innerHTML = "";
       mostrarNavegacao(area, caminho);
+      mostrarTextoSecao(area, caminho);
 
       if (caminho.length === 0) {
         const imagens = arquivos.filter(ehImagem);
         const pastas = arquivos.filter(ehPasta);
-        if (!imagens.length && !pastas.length) {
-          area.insertAdjacentHTML("beforeend", '<div class="state">Em breve os tópicos e as fotos aparecerão aqui! 🌱</div>');
-          return;
-        }
 
         const topicos = [];
         imagens.forEach((arquivo, indice) => {
@@ -1261,6 +1799,19 @@
             alternativaFoto: "📂"
           });
         });
+
+        if (!topicos.some((topico) =>
+          chaveTopico(topico.nome) === "embasamento teorico pedagogico"
+        )) {
+          topicos.push({
+            nome: "Embasamento Teórico Pedagógico",
+            caminho: "Embasamento Teorico Pedagogico",
+            foto: null,
+            descricao: "Conheça os fundamentos teóricos e pedagógicos deste percurso",
+            indice: topicos.length,
+            alternativaFoto: "📚"
+          });
+        }
 
         topicos.sort((a, b) =>
           ordemTopico(a.nome) - ordemTopico(b.nome) || a.indice - b.indice
@@ -1316,18 +1867,34 @@
         const isAgradecimentos = chaveTopico(caminho[caminho.length - 1]) === "agradecimentos";
         if (!isAgradecimentos) {
           const chaveProjeto = caminho.join("/");
-          const descricaoProjeto = Object.entries(PROJETOS).find(([chave]) =>
+          const entradaProjeto = Object.entries(PROJETOS).find(([chave]) =>
             mesmaChave(chave, chaveProjeto)
           );
+          const dadosProjeto = entradaProjeto ? entradaProjeto[1] : null;
           const projeto = document.createElement("section");
           projeto.className = "project";
           const tituloProjeto = document.createElement("h2");
           tituloProjeto.textContent = isRegistro ? "Registro" : "Projeto";
           const textoProjeto = document.createElement("p");
-          textoProjeto.textContent = descricaoProjeto
-            ? descricaoProjeto[1]
+          textoProjeto.textContent = dadosProjeto
+            ? dadosProjeto.descricao
             : "Adicione a descrição deste projeto no objeto PROJETOS, no index.html.";
           projeto.append(tituloProjeto, textoProjeto);
+          if (dadosProjeto) {
+            dadosProjeto.aves.forEach((chaveAve) => {
+              const ave = AVES[chaveAve];
+              if (!ave) throw new Error(`Não há informações cadastradas para a ave "${chaveAve}".`);
+
+              const informacaoAve = document.createElement("section");
+              informacaoAve.className = "bird-info";
+              const tituloAve = document.createElement("h3");
+              tituloAve.textContent = ave.nome;
+              const textoAve = document.createElement("p");
+              textoAve.textContent = ave.descricao;
+              informacaoAve.append(tituloAve, textoAve, criarControleCanto(ave));
+              projeto.appendChild(informacaoAve);
+            });
+          }
           area.appendChild(projeto);
         }
 
